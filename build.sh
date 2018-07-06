@@ -1,7 +1,5 @@
 #!/bin/bash
-
 set -e
-
 SOURCE_DIR=$(pwd)
 
 # INSTALL VCPKG
@@ -17,9 +15,8 @@ fi
 # INSTALL REQUIRED LIBRARIES
 vcpkg install azure-storage-cpp jsoncpp gtest
 
-
 # DOWNLOAD ORTHANC SOURCES
-ORTHANC_VERSION=1.3.2
+ORTHANC_VERSION=1.3.1
 if [ ! -d "orthanc" ];then
   ORHTANC_FILENAME=Orthanc-${ORTHANC_VERSION}.tar.gz
   wget -q -O ${ORHTANC_FILENAME} https://www.orthanc-server.com/downloads/get.php?path=/orthanc/${ORHTANC_FILENAME}
@@ -27,16 +24,23 @@ if [ ! -d "orthanc" ];then
   rm ${ORHTANC_FILENAME}
 fi
 
-mkdir -p ${SOURCE_DIR}/build/{release,debug}
+mkdir -p ${SOURCE_DIR}/build/{debug,release}
+mkdir -p ${SOURCE_DIR}/install
 
 cd ${SOURCE_DIR}/build/debug
 cmake ${SOURCE_DIR} -G"Unix Makefiles" \
       -DORTHANC_ROOT:PATH="${SOURCE_DIR}/Orthanc-${ORTHANC_VERSION}" \
-      -DCMAKE_BUILD_TYPE:STRING=Debug \
-      -DCMAKE_TOOLCHAIN_FILE:PATH=${SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DCMAKE_TOOLCHAIN_FILE:PATH=${SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+      -DCMAKE_INSTALL_PREFIX:PATH=${SOURCE_DIR}/install \
+      -DCMAKE_BUILD_TYPE=Debug
+
+cmake --build . --config Debug --target install -- -j
 
 cd ${SOURCE_DIR}/build/release
 cmake ${SOURCE_DIR} -G"Unix Makefiles" \
       -DORTHANC_ROOT:PATH="${SOURCE_DIR}/Orthanc-${ORTHANC_VERSION}" \
-      -DCMAKE_BUILD_TYPE:STRING=Release \
-      -DCMAKE_TOOLCHAIN_FILE:PATH=${SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake
+      -DCMAKE_TOOLCHAIN_FILE:PATH=${SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+      -DCMAKE_INSTALL_PREFIX:PATH=${SOURCE_DIR}/install \
+      -DCMAKE_BUILD_TYPE=Release
+
+cmake --build . --config Release --target install -- -j

@@ -1,6 +1,7 @@
 #ifndef AZURE_BLOB_STORAGE_AREA_H
 # define AZURE_BLOB_STORAGE_AREA_H
 
+#include "orthancazureblobstorage_export.h"
 #include <orthanc/OrthancCPlugin.h>
 #include <memory>
 #include "AzureBlobStorageConnection.h"
@@ -8,7 +9,7 @@
 
 namespace OrthancPlugins
 {
-  class AzureBlobStorageArea
+  class ORTHANCAZUREBLOBSTORAGE_EXPORT AzureBlobStorageArea
   {  
     public:
       AzureBlobStorageArea(AzureBlobStorageConnection* connection);

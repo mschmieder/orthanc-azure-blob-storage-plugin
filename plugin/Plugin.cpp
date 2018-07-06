@@ -106,7 +106,7 @@ extern "C"
 
 
     Json::Value configuration;
-    if (!OrthancPlugins::readConfiguration(configuration, context))
+    if (!OrthancPlugins::ReadConfiguration(configuration, context))
     {
       OrthancPluginLogError(context_, "Unable to read the configuration file");
       return -1;
@@ -115,7 +115,7 @@ extern "C"
 
     if (!configuration.isMember("AzureBlobStorage") ||
         configuration["AzureBlobStorage"].type() != Json::objectValue ||
-        !OrthancPlugins::getBooleanValue(configuration["AzureBlobStorage"], "EnableStorage", false))
+        !OrthancPlugins::GetBooleanValue(configuration["AzureBlobStorage"], "EnableStorage", false))
     {
       OrthancPluginLogWarning(context_, "The AzureBlobStorage storage area is currently disabled, set \"EnableStorage\" to \"true\" in the \"AzureBlobStorage\" section of the configuration file of Orthanc");
       return 0;
@@ -128,7 +128,7 @@ extern "C"
     try
     {
       std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection>
-      pg(OrthancPlugins::createConnection(context_, configuration));
+      pg(OrthancPlugins::CreateConnection(context_, configuration));
 
       /* Create the storage area back-end */
       storage_ = new OrthancPlugins::AzureBlobStorageArea(pg.release());
@@ -168,6 +168,6 @@ extern "C"
 
   ORTHANC_PLUGINS_API const char* OrthancPluginGetVersion()
   {
-    return "1.0.0";
+    return AZURE_BLOB_STORAGE_PLUGIN_VERSION;
   }
 }

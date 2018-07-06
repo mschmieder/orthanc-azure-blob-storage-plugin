@@ -103,11 +103,12 @@ namespace OrthancPlugins
         }
      }
 
+     connection->establishConnection();
      return connection.release();
    }
 
 
-  std::string generateUuid()
+  std::string GenerateUuid()
   {
 #ifdef WIN32
     UUID uuid;

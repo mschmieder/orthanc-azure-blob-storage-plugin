@@ -1,6 +1,7 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
+#include "orthancazureblobstorage_export.h"
 #include <json/value.h>
 #include <orthanc/OrthancCPlugin.h>
 #include "AzureBlobStorageConnection.h"
@@ -16,7 +17,7 @@ namespace OrthancPlugins
    *
    * @return     { description_of_the_return_value }
    */
-  bool ReadConfiguration(Json::Value& configuration, OrthancPluginContext* context);
+  bool ORTHANCAZUREBLOBSTORAGE_EXPORT ReadConfiguration(Json::Value& configuration, OrthancPluginContext* context);
   
 
   /**
@@ -25,7 +26,7 @@ namespace OrthancPlugins
    * @param configuration
    * @return
    */
-  AzureBlobStorageConnection* RreateConnection(OrthancPluginContext* context, const Json::Value& configuration);
+  AzureBlobStorageConnection* ORTHANCAZUREBLOBSTORAGE_EXPORT CreateConnection(OrthancPluginContext* context, const Json::Value& configuration);
 
 
   /**
@@ -37,7 +38,7 @@ namespace OrthancPlugins
    *
    * @return     The string value.
    */
-  std::string GetStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue);
+  std::string ORTHANCAZUREBLOBSTORAGE_EXPORT GetStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue);
   
   /**
    * @brief      Gets the integer value.
@@ -48,7 +49,7 @@ namespace OrthancPlugins
    *
    * @return     The integer value.
    */
-  int GetIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue);
+  int ORTHANCAZUREBLOBSTORAGE_EXPORT GetIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue);
   
   /**
    * @brief      Gets the boolean value.
@@ -59,14 +60,14 @@ namespace OrthancPlugins
    *
    * @return     The boolean value.
    */
-  bool GetBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue);
+  bool ORTHANCAZUREBLOBSTORAGE_EXPORT GetBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue);
   
   /**
    * @brief      { function_description }
    *
    * @return     { description_of_the_return_value }
    */
-  std::string GenerateUuid();
+  std::string ORTHANCAZUREBLOBSTORAGE_EXPORT GenerateUuid();
 
 
   /**
@@ -77,7 +78,7 @@ namespace OrthancPlugins
    *
    * @return     True if flag in command line arguments, False otherwise.
    */
-  bool IsFlagInCommandLineArguments(OrthancPluginContext* context, const std::string& flag);
+  bool ORTHANCAZUREBLOBSTORAGE_EXPORT IsFlagInCommandLineArguments(OrthancPluginContext* context, const std::string& flag);
 
 } //namespace OrthancPlugins
 

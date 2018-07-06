@@ -1,0 +1,7 @@
+{
+  "AzureBlobStorage" : {
+      "EnableStorage" : true,
+      "ConnectionString" : "",
+      "ContainerName" : ""
+  }
+}

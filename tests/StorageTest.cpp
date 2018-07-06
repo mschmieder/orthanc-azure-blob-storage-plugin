@@ -3,7 +3,7 @@
 #include "AzureBlobStorageArea.h"
 #include <orthanc/OrthancCPlugin.h>
 
-const utility::string_t storage_connection_string(U("DefaultEndpointsProtocol=https;AccountName=orthancblobstore;AccountKey=IAY6dTllTCSnlAtwyIZFav2LAJzfqAfAeHSjb6d9IqnD2NNk4Q7C15CoU1/yq7F0VakV6OLsmsuRri/BJ28m3A==;EndpointSuffix=core.windows.net"));
+const utility::string_t storage_connection_string(U("DefaultEndpointsProtocol=https;AccountName=XXXXXX;AccountKey=XXXXXXX;EndpointSuffix=core.windows.net"));
 const utility::string_t container_name(U("orthanc-blob-container"));
 
 class AzureBlobStorageTest : public ::testing::Test {
@@ -28,7 +28,7 @@ class AzureBlobStorageTest : public ::testing::Test {
 };
 
 const static std::string input_data(1024*1024, 'A');
-const static std::string filename = OrthancPlugins::generateUuid();
+const static std::string filename = OrthancPlugins::GenerateUuid();
 const static OrthancPluginContentType type = OrthancPluginContentType_Unknown;
 
 TEST_F(AzureBlobStorageTest, StoreFiles)
