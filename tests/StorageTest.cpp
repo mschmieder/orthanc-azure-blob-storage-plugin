@@ -3,6 +3,9 @@
 #include "AzureBlobStorageArea.h"
 #include <orthanc/OrthancCPlugin.h>
 
+const utility::string_t storage_connection_string(U("DefaultEndpointsProtocol=https;AccountName=orthancblobstore;AccountKey=IAY6dTllTCSnlAtwyIZFav2LAJzfqAfAeHSjb6d9IqnD2NNk4Q7C15CoU1/yq7F0VakV6OLsmsuRri/BJ28m3A==;EndpointSuffix=core.windows.net"));
+const utility::string_t container_name(U("orthanc-blob-container"));
+
 class AzureBlobStorageTest : public ::testing::Test {
  protected:
     std::unique_ptr<OrthancPlugins::AzureBlobStorageArea> storage_;
@@ -10,6 +13,10 @@ class AzureBlobStorageTest : public ::testing::Test {
   virtual void SetUp() 
   {
     std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection> connection = std::make_unique<OrthancPlugins::AzureBlobStorageConnection>();
+    connection->setConnectionString(storage_connection_string);
+    connection->setContainerName(container_name);
+    connection->establishConnection();
+
     storage_ = std::make_unique<OrthancPlugins::AzureBlobStorageArea>(connection.release());
   }
 
@@ -26,7 +33,7 @@ const static OrthancPluginContentType type = OrthancPluginContentType_Unknown;
 
 TEST_F(AzureBlobStorageTest, StoreFiles)
 {
-    storage_->Create(filename, input_data.c_str(), input_data.length(), type);
+    ASSERT_NO_THROW(storage_->Create(filename, input_data.c_str(), input_data.length(), type));
 
     void* content;
     size_t size;

@@ -18,9 +18,9 @@ static OrthancPlugins::AzureBlobStorageArea* storage_ = nullptr;
 
 
 static RETURN_TYPE StorageCreate(const char* uuid,
-                                            const void* content,
-                                            int64_t size,
-                                            OrthancPluginContentType type)
+                                 const void* content,
+                                 int64_t size,
+                                 OrthancPluginContentType type)
 {
   try
   {
@@ -36,9 +36,9 @@ static RETURN_TYPE StorageCreate(const char* uuid,
 
 
 static RETURN_TYPE StorageRead(void** content,
-                                          int64_t* size,
-                                          const char* uuid,
-                                          OrthancPluginContentType type)
+                               int64_t* size,
+                               const char* uuid,
+                               OrthancPluginContentType type)
 {
   try
   {
@@ -56,7 +56,7 @@ static RETURN_TYPE StorageRead(void** content,
 
 
 static RETURN_TYPE StorageRemove(const char* uuid,
-                                            OrthancPluginContentType type)
+                                 OrthancPluginContentType type)
 {
   try
   {
@@ -74,7 +74,7 @@ static RETURN_TYPE StorageRemove(const char* uuid,
 static bool DisplayPerformanceWarning()
 {
   (void) DisplayPerformanceWarning;   // Disable warning about unused function
-  OrthancPluginLogWarning(context_, "Performance warning in MongoDB storage: "
+  OrthancPluginLogWarning(context_, "Performance warning in AzureBlob storage: "
                           "Non-release build, runtime debug assertions are turned on");
   return true;
 }
@@ -102,7 +102,7 @@ extern "C"
       return -1;
     }
 
-    OrthancPluginSetDescription(context_, "Stores the files received by Orthanc into a MongoDB database.");
+    OrthancPluginSetDescription(context_, "Stores the files received by Orthanc into a AzureBlobStorage.");
 
 
     Json::Value configuration;
@@ -113,22 +113,22 @@ extern "C"
     }
 
 
-    if (!configuration.isMember("MongoDB") ||
-        configuration["MongoDB"].type() != Json::objectValue ||
-        !OrthancPlugins::getBooleanValue(configuration["MongoDB"], "EnableStorage", false))
+    if (!configuration.isMember("AzureBlobStorage") ||
+        configuration["AzureBlobStorage"].type() != Json::objectValue ||
+        !OrthancPlugins::getBooleanValue(configuration["AzureBlobStorage"], "EnableStorage", false))
     {
-      OrthancPluginLogWarning(context_, "The MongoDB storage area is currently disabled, set \"EnableStorage\" to \"true\" in the \"MongoDB\" section of the configuration file of Orthanc");
+      OrthancPluginLogWarning(context_, "The AzureBlobStorage storage area is currently disabled, set \"EnableStorage\" to \"true\" in the \"AzureBlobStorage\" section of the configuration file of Orthanc");
       return 0;
     }
     else
     {
-      OrthancPluginLogWarning(context_, "Using MongoDB storage area");
+      OrthancPluginLogWarning(context_, "Using AzureBlobStorage storage area");
     }
 
     try
     {
       std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection>
-        pg(OrthancPlugins::createConnection(context_, configuration));
+      pg(OrthancPlugins::createConnection(context_, configuration));
 
       /* Create the storage area back-end */
       storage_ = new OrthancPlugins::AzureBlobStorageArea(pg.release());

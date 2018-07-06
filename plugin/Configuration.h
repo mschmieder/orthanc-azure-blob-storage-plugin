@@ -16,7 +16,7 @@ namespace OrthancPlugins
    *
    * @return     { description_of_the_return_value }
    */
-  bool readConfiguration(Json::Value& configuration, OrthancPluginContext* context);
+  bool ReadConfiguration(Json::Value& configuration, OrthancPluginContext* context);
   
 
   /**
@@ -25,7 +25,7 @@ namespace OrthancPlugins
    * @param configuration
    * @return
    */
-  AzureBlobStorageConnection* createConnection(OrthancPluginContext* context, const Json::Value& configuration);
+  AzureBlobStorageConnection* RreateConnection(OrthancPluginContext* context, const Json::Value& configuration);
 
 
   /**
@@ -37,7 +37,7 @@ namespace OrthancPlugins
    *
    * @return     The string value.
    */
-  std::string getStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue);
+  std::string GetStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue);
   
   /**
    * @brief      Gets the integer value.
@@ -48,7 +48,7 @@ namespace OrthancPlugins
    *
    * @return     The integer value.
    */
-  int getIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue);
+  int GetIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue);
   
   /**
    * @brief      Gets the boolean value.
@@ -59,14 +59,14 @@ namespace OrthancPlugins
    *
    * @return     The boolean value.
    */
-  bool getBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue);
+  bool GetBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue);
   
   /**
    * @brief      { function_description }
    *
    * @return     { description_of_the_return_value }
    */
-  std::string generateUuid();
+  std::string GenerateUuid();
 
 
   /**
@@ -77,7 +77,7 @@ namespace OrthancPlugins
    *
    * @return     True if flag in command line arguments, False otherwise.
    */
-  bool isFlagInCommandLineArguments(OrthancPluginContext* context, const std::string& flag);
+  bool IsFlagInCommandLineArguments(OrthancPluginContext* context, const std::string& flag);
 
 } //namespace OrthancPlugins
 

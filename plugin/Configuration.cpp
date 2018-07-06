@@ -18,7 +18,7 @@ extern "C"
 namespace OrthancPlugins
 {
 
-  bool readConfiguration(Json::Value& configuration, OrthancPluginContext* context)
+  bool ReadConfiguration(Json::Value& configuration, OrthancPluginContext* context)
   {
     std::string s;
 
@@ -45,7 +45,7 @@ namespace OrthancPlugins
   }
 
 
-  std::string getStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue)
+  std::string GetStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue)
   {
     if (configuration.type() != Json::objectValue || !configuration.isMember(key) ||
         configuration[key].type() != Json::stringValue)
@@ -59,7 +59,7 @@ namespace OrthancPlugins
   }
 
 
-  int getIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue)
+  int GetIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue)
   {
     if (configuration.type() != Json::objectValue || !configuration.isMember(key) ||
         configuration[key].type() != Json::intValue)
@@ -73,7 +73,7 @@ namespace OrthancPlugins
   }
 
 
-  bool getBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue)
+  bool GetBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue)
   {
     if (configuration.type() != Json::objectValue || !configuration.isMember(key) ||
         configuration[key].type() != Json::booleanValue)
@@ -87,7 +87,7 @@ namespace OrthancPlugins
   }
 
 
-   AzureBlobStorageConnection* createConnection(OrthancPluginContext* context, const Json::Value& configuration)
+   AzureBlobStorageConnection* CreateConnection(OrthancPluginContext* context, const Json::Value& configuration)
    {
      std::unique_ptr<AzureBlobStorageConnection> connection = std::make_unique<AzureBlobStorageConnection>();
      if (configuration.isMember("AzureBlobStorage"))
@@ -97,34 +97,10 @@ namespace OrthancPlugins
         {
           connection->setConnectionString(c["ConnectionString"].asString());
         }
-       // if (c.isMember("ChunkSize"))
-       // {
-       //   connection->SetChunkSize(c["ChunkSize"].asInt());
-       // }
-       // if (c.isMember("host"))
-       // {
-       //   connection->SetHost(c["host"].asString());
-       // }
-       // if (c.isMember("port"))
-       // {
-       //   connection->SetTcpPort(c["port"].asInt());
-       // }
-       // if (c.isMember("database"))
-       // {
-       //   connection->SetDatabase(c["database"].asString());
-       // }
-       // if (c.isMember("user"))
-       // {
-       //   connection->SetUser(c["user"].asString());
-       // }
-       // if (c.isMember("password"))
-       // {
-       //   connection->SetPassword(c["password"].asString());
-       // }
-       // if (c.isMember("authenticationDatabase"))
-       // {
-       //   connection->SetAuthenticationDatabase(c["authenticationDatabase"].asString());
-       // }
+        if (c.isMember("ContainerName"))
+        {
+          connection->setContainerName(c["ContainerName"].asString());
+        }
      }
 
      return connection.release();
