@@ -9,7 +9,9 @@ if(Orthanc_DIR)
   set(ORTHANC_PLUGINS_INCLUDE_DIR "${Orthanc_DIR}/Plugins/Include/")
   
   add_library(Orthanc::Plugins INTERFACE IMPORTED)
-  target_include_directories(Orthanc::Plugins INTERFACE ${ORTHANC_PLUGINS_INCLUDE_DIR})
+  set_target_properties(Orthanc::Plugins 
+                        PROPERTIES
+                        INTERFACE_INCLUDE_DIRECTORIES "${ORTHANC_PLUGINS_INCLUDE_DIR}")
 
   message(STATUS "Found Orthanc SDK: ${ORTHANC_PLUGINS_INCLUDE_DIR}")
 else()

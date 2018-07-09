@@ -20,7 +20,10 @@ generate_export_header(OrthancAzureBlobStorage)
 target_include_directories(OrthancAzureBlobStorage PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
 target_compile_definitions(OrthancAzureBlobStorage
-                           PRIVATE "-DAZURE_BLOB_STORAGE_PLUGIN_VERSION=\"${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR}.${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MINOR}.${AZURE_BLOB_STORAGE_PLUGIN_VERSION_PATCH}\"")
+                           PRIVATE "-DAZURE_BLOB_STORAGE_PLUGIN_VERSION=\"${AZURE_BLOB_STORAGE_PLUGIN_VERSION}\"")
+
+set_target_properties(OrthancAzureBlobStorage PROPERTIES VERSION   ${AZURE_BLOB_STORAGE_PLUGIN_VERSION}
+                                                         SOVERSION ${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR} )
 
 install(TARGETS OrthancAzureBlobStorage
         LIBRARY DESTINATION plugin
