@@ -14,6 +14,13 @@ target_link_libraries(OrthancAzureBlobStorage
                       Azure::Storage
                       JsonCpp::JsonCppStatic)
 
+#Linux specific switches
+if(NOT APPLE)
+  target_link_libraries(OrthancSqlServerStorage 
+                        uuid)
+endif()
+
+
 include(GenerateExportHeader)
 generate_export_header(OrthancAzureBlobStorage)
 
