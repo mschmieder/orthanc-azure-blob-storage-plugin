@@ -17,7 +17,6 @@ services:
       INSTALL_DIR: /src/install
       VCPKG_DIR: /bootstrap/vcpkg
     command: /bin/bash build.sh
-services:
   github-build:
     image: mschmieder/orthanc-azure-blob-storage-plugin-sdk
     volumes:
