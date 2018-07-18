@@ -1,0 +1,16 @@
+set(SOURCES Crypto.h
+            Crypto.cpp
+            EncryptionKey.h
+            EncryptionKeyAes.h
+            EncryptionKeyAes.cpp)
+
+add_library(OrthancAzureBlobStorageCore STATIC ${SOURCES})
+
+target_include_directories(OrthancAzureBlobStorageCore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+                                                              $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
+
+target_link_libraries(OrthancAzureBlobStorageCore cryptopp-static)
+
+
+set_target_properties(OrthancAzureBlobStorageCore PROPERTIES VERSION   ${AZURE_BLOB_STORAGE_PLUGIN_VERSION}
+                                                         SOVERSION ${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR} )

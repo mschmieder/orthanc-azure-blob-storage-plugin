@@ -27,7 +27,11 @@ if [ ! -d "vcpkg" ];then
 fi 
 
 # INSTALL REQUIRED LIBRARIES
-vcpkg ${TRIPLET} install azure-storage-cpp jsoncpp gtest
+vcpkg ${TRIPLET} install \
+  azure-storage-cpp \
+  jsoncpp \
+  gtest \
+  cryptopp
 
 # DOWNLOAD ORTHANC SOURCES
 if [ -z "${ORTHANC_VERSION}" ];then

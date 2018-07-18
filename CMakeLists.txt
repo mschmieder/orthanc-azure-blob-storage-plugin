@@ -25,7 +25,9 @@ endif()
 # Find required packages
 find_package(Orthanc REQUIRED)  
 find_package(JsonCpp REQUIRED)
+find_package(cryptopp REQUIRED)
 find_package(AzureStorage REQUIRED)
 
+add_subdirectory("core")
 add_subdirectory("plugin")
 add_subdirectory("tests")

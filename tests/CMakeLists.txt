@@ -9,4 +9,10 @@ target_link_libraries(AzureStorageTests OrthancAzureBlobStorage
                                         Azure::Storage
                                         GTest::GTest)
 
-gtest_add_tests(TARGET AzureStorageTests TEST_PREFIX azure:)
+#gtest_add_tests(TARGET AzureStorageTests TEST_PREFIX azure:)
+
+
+add_executable(CryptoTests CryptoTest.cpp)
+target_link_libraries(CryptoTests OrthancAzureBlobStorageCore GTest::GTest)
+
+#gtest_add_tests(TARGET CryptoTests TEST_PREFIX crypto:)
