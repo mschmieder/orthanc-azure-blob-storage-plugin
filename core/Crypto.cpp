@@ -1,16 +1,16 @@
 #include "Crypto.h"
-#include "EncryptionKeyAes.h"
+#include "AesEncryptionKey.h"
 using namespace crypto;
 using namespace CryptoPP;
 
 std::vector<uint8_t> Encryption::encrypt(const EncryptionKey* kek, const uint8_t* data, size_t size)
 {
   // generate one time content encryption key
-  EncryptionKeyAes cek;
+  AesEncryptionKey cek;
   cek.generate();
 
   // encrypt one time content encryption key (cek) with key encryption key (kek)
-  EncryptionKeyAes cek_encrypted(kek->wrap(cek.data(), cek.size()), cek.iv());
+  AesEncryptionKey cek_encrypted(kek->wrap(cek.data(), cek.size()), cek.iv());
 
   // encrypt the data
   std::vector<uint8_t> encryted_data = cek.wrap(data, size);
@@ -41,11 +41,11 @@ std::vector<uint8_t> Decryption::decrypt(const EncryptionKey* kek, const uint8_t
   CryptoMetaData meta = CryptoMetaData::deserialize(data, size);
 
   // retrieve the encrypted content encryption key
-  EncryptionKeyAes cek_encrypted = meta.getKey();
+  AesEncryptionKey cek_encrypted = meta.getKey();
 
   // decrypt the content encryption key using the key encryption key and
   // add the stored initialization vector
-  EncryptionKeyAes cek(kek->unwrap(cek_encrypted.data(), cek_encrypted.size()),
+  AesEncryptionKey cek(kek->unwrap(cek_encrypted.data(), cek_encrypted.size()),
                        cek_encrypted.iv());
 
   // compute the encrypted data location
@@ -58,7 +58,7 @@ std::vector<uint8_t> Decryption::decrypt(const EncryptionKey* kek, const uint8_t
 }
 
 
-CryptoMetaData::CryptoMetaData(const EncryptionKeyAes key,
+CryptoMetaData::CryptoMetaData(const AesEncryptionKey key,
                                const uint64_t encryptedDataSize,
                                const uint64_t decryptedDataSize)
   : m_key(key),
@@ -132,7 +132,7 @@ CryptoMetaData CryptoMetaData::deserialize(const uint8_t* data, size_t size)
   memcpy((void*)iv.data(), ptr, meta.m_ivSize);
   ptr += meta.m_ivSize;
 
-  meta.m_key = EncryptionKeyAes(secKey, iv);
+  meta.m_key = AesEncryptionKey(secKey, iv);
 
   return meta;
 }
@@ -173,7 +173,7 @@ uint64_t CryptoMetaData::getIvSize() const
   return m_ivSize;
 }
 
-const EncryptionKeyAes& CryptoMetaData::getKey() const
+const AesEncryptionKey& CryptoMetaData::getKey() const
 {
   return m_key;
 }

@@ -1,29 +1,29 @@
-#include "EncryptionKeyAes.h"
+#include "AesEncryptionKey.h"
 
 using namespace crypto;
 using namespace CryptoPP;
 
-EncryptionKeyAes::EncryptionKeyAes()
+AesEncryptionKey::AesEncryptionKey()
 {
 }
 
-EncryptionKeyAes::EncryptionKeyAes(const SecByteBlock& key, const std::vector<uint8_t>& iv )
+AesEncryptionKey::AesEncryptionKey(const SecByteBlock& key, const std::vector<uint8_t>& iv )
   : m_key(key), m_iv(iv)
 {
 }
 
-EncryptionKeyAes::EncryptionKeyAes(const std::vector<uint8_t>& key, const std::vector<uint8_t>& iv )
+AesEncryptionKey::AesEncryptionKey(const std::vector<uint8_t>& key, const std::vector<uint8_t>& iv )
   : m_iv(iv)
 {
   m_key = SecByteBlock(key.size());
   m_key.Assign((const uint8_t*)key.data(), key.size());
 }
 
-EncryptionKeyAes::~EncryptionKeyAes()
+AesEncryptionKey::~AesEncryptionKey()
 {
 }
 
-void EncryptionKeyAes::generate(size_t keyLenth)
+void AesEncryptionKey::generate(size_t keyLenth)
 {
   AutoSeededRandomPool prng;
 
@@ -34,7 +34,7 @@ void EncryptionKeyAes::generate(size_t keyLenth)
   prng.GenerateBlock( m_iv.data(), m_iv.size() );
 }
 
-std::vector<uint8_t> EncryptionKeyAes::EncryptionKeyAes::wrap(const uint8_t* unencryptedData, size_t size) const
+std::vector<uint8_t> AesEncryptionKey::AesEncryptionKey::wrap(const uint8_t* unencryptedData, size_t size) const
 {
   std::vector<uint8_t> cipher;
   cipher.resize(size + AES::BLOCKSIZE);
@@ -52,7 +52,7 @@ std::vector<uint8_t> EncryptionKeyAes::EncryptionKeyAes::wrap(const uint8_t* une
   return cipher;
 }
 
-std::vector<uint8_t> EncryptionKeyAes::unwrap(const uint8_t* data, size_t size) const
+std::vector<uint8_t> AesEncryptionKey::unwrap(const uint8_t* data, size_t size) const
 {
   std::vector<uint8_t> recover;
   recover.resize(size);
@@ -71,22 +71,22 @@ std::vector<uint8_t> EncryptionKeyAes::unwrap(const uint8_t* data, size_t size) 
   return recover;
 }
 
-const std::vector<uint8_t>& EncryptionKeyAes::iv() const
+const std::vector<uint8_t>& AesEncryptionKey::iv() const
 {
   return m_iv;
 }
 
-const uint8_t* EncryptionKeyAes::data() const
+const uint8_t* AesEncryptionKey::data() const
 {
   return m_key.data();
 }
 
-size_t EncryptionKeyAes::size() const
+size_t AesEncryptionKey::size() const
 {
   return m_key.size();
 }
 
-const SecByteBlock& EncryptionKeyAes::key() const
+const SecByteBlock& AesEncryptionKey::key() const
 {
   return m_key;
 }

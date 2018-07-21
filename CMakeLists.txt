@@ -26,6 +26,7 @@ endif()
 find_package(Orthanc REQUIRED)  
 find_package(JsonCpp REQUIRED)
 find_package(cryptopp REQUIRED)
+find_package(cpprestsdk REQUIRED)
 find_package(AzureStorage REQUIRED)
 
 add_subdirectory("core")

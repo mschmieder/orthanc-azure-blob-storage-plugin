@@ -10,14 +10,14 @@
 
 namespace crypto
 {
-  class EncryptionKeyAes : public EncryptionKey
+  class AesEncryptionKey : public EncryptionKey
   {
     public:
-      EncryptionKeyAes();
-      EncryptionKeyAes(const CryptoPP::SecByteBlock& key, const std::vector<uint8_t>& iv);
-      EncryptionKeyAes(const std::vector<uint8_t>& key, const std::vector<uint8_t>& iv );
+      AesEncryptionKey();
+      AesEncryptionKey(const CryptoPP::SecByteBlock& key, const std::vector<uint8_t>& iv);
+      AesEncryptionKey(const std::vector<uint8_t>& key, const std::vector<uint8_t>& iv );
 
-      virtual ~EncryptionKeyAes();
+      virtual ~AesEncryptionKey();
 
       void generate(size_t keyLenth = CryptoPP::AES::MAX_KEYLENGTH);
       

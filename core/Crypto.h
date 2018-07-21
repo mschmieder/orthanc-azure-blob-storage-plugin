@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "EncryptionKey.h"
-#include "EncryptionKeyAes.h"
+#include "AesEncryptionKey.h"
 
 namespace crypto
 {
@@ -29,7 +29,7 @@ namespace crypto
   class CryptoMetaData
   {
     public:
-      CryptoMetaData(const EncryptionKeyAes key = EncryptionKeyAes(),
+      CryptoMetaData(const AesEncryptionKey key = AesEncryptionKey(),
                      const uint64_t encryptedDataSize = 0,
                      const uint64_t decryptedDataSize = 0);
 
@@ -51,10 +51,10 @@ namespace crypto
 
       uint64_t getIvSize() const;
 
-      const EncryptionKeyAes& getKey() const;
+      const AesEncryptionKey& getKey() const;
 
     private:
-      EncryptionKeyAes m_key;
+      AesEncryptionKey m_key;
       uint64_t m_keySize;
       uint64_t m_decryptedDataSize;
       uint64_t m_encryptedDataSize;
