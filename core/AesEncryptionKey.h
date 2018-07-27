@@ -2,27 +2,32 @@
 #define ENCRYPTION_KEY_AES_H
 
 #include "EncryptionKey.h"
-#include <osrng.h>
-#include <modes.h>
-#include <hex.h>
-#include <files.h>
-#include <filters.h>
+
+#include <cryptopp/secblock.h>
+#include <cryptopp/aes.h>
+#include <vector>
+
 
 namespace crypto
 {
-  class AesEncryptionKey : public EncryptionKey
+  class AesEncryptionKey : public crypto::EncryptionKey
   {
     public:
       AesEncryptionKey();
+      virtual ~AesEncryptionKey();
+
       AesEncryptionKey(const CryptoPP::SecByteBlock& key, const std::vector<uint8_t>& iv);
       AesEncryptionKey(const std::vector<uint8_t>& key, const std::vector<uint8_t>& iv );
 
-      virtual ~AesEncryptionKey();
-
       void generate(size_t keyLenth = CryptoPP::AES::MAX_KEYLENGTH);
-      
+
       virtual std::vector<uint8_t> wrap(const uint8_t* unencryptedData, size_t size) const;
       virtual std::vector<uint8_t> unwrap(const uint8_t* data, size_t size) const;
+      virtual void unwrap(const uint8_t* data, size_t size, uint8_t* dest, size_t destSize) const;
+
+      virtual std::string metaData() const;
+      static AesEncryptionKey fromJson(const std::string& meta);
+
       const std::vector<uint8_t>& iv() const;
 
       const uint8_t* data() const;

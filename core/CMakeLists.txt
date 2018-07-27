@@ -1,10 +1,19 @@
 set(SOURCES Crypto.h
             Crypto.cpp
+            CryptoMetaData.h
+            CryptoMetaData.cpp
+            Cipher.h
+            Cipher.cpp
+            azure/AuthEndpoint.h
+            azure/AuthEndpoint.cpp
+            azure/JwtToken.h
+            azure/JwtToken.cpp
+            azure/AzureKeyVaultException.h
+            azure/AzureKeyVaultClient.h
+            azure/AzureKeyVaultClient.cpp
+            azure/AzureKeyVaultEncryptionKey.h
+            azure/AzureKeyVaultEncryptionKey.cpp
             EncryptionKey.h
-            AzureKeyVaultClient.h
-            AzureKeyVaultClient.cpp
-            AzureKeyVaultEncryptionKey.h
-            AzureKeyVaultEncryptionKey.cpp
             AesEncryptionKey.h
             AesEncryptionKey.cpp)
 

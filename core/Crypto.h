@@ -1,9 +1,12 @@
-#ifndef CRYPTO_H
-#define CRYPTO_H
+#ifndef __CRYPTO_H__
+#define __CRYPTO_H__
 
-#include <vector>
 #include "EncryptionKey.h"
-#include "AesEncryptionKey.h"
+#include "Cipher.h"
+#include "CryptoMetaData.h"
+
+#include <sstream>
+#include <vector>
 
 namespace crypto
 {
@@ -13,7 +16,16 @@ namespace crypto
       Encryption() = delete;
       ~Encryption() = delete;
 
-      static std::vector<uint8_t> encrypt(const EncryptionKey* kek, const uint8_t* data, size_t size);
+      /**
+       * @brief      encrypt data using a key encryption key
+       *
+       * @param[in]  kek   The kek
+       * @param[in]  data  The data
+       * @param[in]  size  The size
+       *
+       * @return     cipher holding encrypted data
+       */
+      static Cipher encrypt(const EncryptionKey* kek, const uint8_t* data, size_t size);
 
   };
 
@@ -23,43 +35,38 @@ namespace crypto
       Decryption() = delete;
       ~Decryption() = delete;
 
-      static std::vector<uint8_t> decrypt(const EncryptionKey* kek, const uint8_t* data, size_t size);
+      /**
+       * @brief      decrypt data using key encryption key
+       *
+       * @param[in]  kek   The kek
+       * @param[in]  meta  The meta
+       * @param[in]  data  The data
+       * @param[in]  size  The size
+       *
+       * @return     decrypted data
+       */
+      static std::vector<uint8_t> decrypt(const EncryptionKey* kek,
+                                          const CryptoMetaData& meta,
+                                          const uint8_t* data, size_t size);
+
+      /**
+       * @brief      decrypt data using key encryption key
+       *
+       * @param[in]  kek                The kek
+       * @param[in]  meta               The meta
+       * @param[in]  data               The data
+       * @param[in]  size               The size
+       * @param      decryptedData      The decrypted data
+       * @param[in]  decryptedDataSize  The decrypted data size
+       */
+      static void decrypt(const EncryptionKey* kek,
+                          const CryptoMetaData& meta,
+                          const uint8_t* data, size_t size,
+                          uint8_t* decryptedData,
+                          size_t decryptedDataSize);
   };
 
-  class CryptoMetaData
-  {
-    public:
-      CryptoMetaData(const AesEncryptionKey key = AesEncryptionKey(),
-                     const uint64_t encryptedDataSize = 0,
-                     const uint64_t decryptedDataSize = 0);
 
-      ~CryptoMetaData();
-
-      size_t serialize(const uint8_t* data) const;
-
-      static CryptoMetaData deserialize(const uint8_t* data, size_t size);
-
-      size_t getMetaDataSize() const;
-
-      size_t getCipherSize() const;
-
-      uint64_t getKeySize() const;
-
-      uint64_t getDecryptedDataSize() const;
-
-      uint64_t getEncryptedDataSize() const;
-
-      uint64_t getIvSize() const;
-
-      const AesEncryptionKey& getKey() const;
-
-    private:
-      AesEncryptionKey m_key;
-      uint64_t m_keySize;
-      uint64_t m_decryptedDataSize;
-      uint64_t m_encryptedDataSize;
-      uint64_t m_ivSize;
-  };
 
 } // crypto
 

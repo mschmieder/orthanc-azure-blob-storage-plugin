@@ -2,6 +2,14 @@
   "AzureBlobStorage" : {
       "EnableStorage" : true,
       "ConnectionString" : "",
-      "ContainerName" : ""
+      "ContainerName" : "",
+      "EncryptionEnabled" : true,
+      "AzureKeyVault": {
+        "baseUrl" : "https://xxx-yyyy.vault.azure.net/",
+        "clientId" : "1a816e71-9ae0-4666-a6d1-cac05c5de767",
+        "clientSecret" : "rwifi2d3456sCslZn40jDDzgZDuhpCp93qZjKX9Y4=",
+        "kid" : "OrthancKek"
+      }
+
   }
 }

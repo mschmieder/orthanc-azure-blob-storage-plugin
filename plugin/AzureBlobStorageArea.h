@@ -62,6 +62,11 @@ namespace OrthancPlugins
        */
       static std::string CreateBlobName(const std::string& uuid, OrthancPluginContentType type);
 
+      void DeleteBlob(const std::string& uuid);
+      pplx::task<void> UploadData(const std::string& blobName, const uint8_t* blob, size_t blobSize);
+      std::vector<uint8_t> DownloadData(const std::string& blobName);
+      size_t DownloadData(const std::string& blobName, void*& data);
+
       std::unique_ptr<AzureBlobStorageConnection>  m_connection;
   };
 }

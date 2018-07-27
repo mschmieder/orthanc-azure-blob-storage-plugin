@@ -10,6 +10,7 @@ set(SOURCES AzureBlobStorageException.h
 add_library(OrthancAzureBlobStorage SHARED ${SOURCES})
 
 target_link_libraries(OrthancAzureBlobStorage 
+                      OrthancAzureBlobStorageCore
                       Orthanc::Plugins
                       Azure::Storage
                       JsonCpp::JsonCppStatic)

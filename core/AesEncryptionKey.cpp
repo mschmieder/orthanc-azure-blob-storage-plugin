@@ -1,4 +1,11 @@
+#include <cryptopp/osrng.h>
+#include <cryptopp/modes.h>
+#include <cryptopp/aes.h>
+#include <cryptopp/hex.h>
+
 #include "AesEncryptionKey.h"
+
+#include <cpprest/json.h>
 
 using namespace crypto;
 using namespace CryptoPP;
@@ -52,23 +59,33 @@ std::vector<uint8_t> AesEncryptionKey::AesEncryptionKey::wrap(const uint8_t* une
   return cipher;
 }
 
-std::vector<uint8_t> AesEncryptionKey::unwrap(const uint8_t* data, size_t size) const
+void AesEncryptionKey::unwrap(const uint8_t* data, size_t size, uint8_t* dest, size_t destSize) const
 {
-  std::vector<uint8_t> recover;
-  recover.resize(size);
-
   CBC_Mode< AES >::Decryption d;
   d.SetKeyWithIV( m_key, m_key.size(), m_iv.data(), m_iv.size() );
 
-  ArraySink rs(&recover[0], recover.size());
+  ArraySink rs(dest, destSize);
 
   ArraySource(data, size, true,
               new StreamTransformationFilter(d, new Redirector(rs)));
+}
 
-  // Set recovered text length now that its known
-  recover.resize(rs.TotalPutLength());
+std::vector<uint8_t> AesEncryptionKey::unwrap(const uint8_t* data, size_t size) const
+{
+    std::vector<uint8_t> recover(size);
 
-  return recover;
+    CBC_Mode< AES >::Decryption d;
+    d.SetKeyWithIV( m_key, m_key.size(), m_iv.data(), m_iv.size() );
+
+    ArraySink rs(recover.data(), size);
+
+    ArraySource(data, size, true,
+                new StreamTransformationFilter(d, new Redirector(rs)));
+
+    // Set recovered text length now that its known
+    recover.resize(rs.TotalPutLength());
+
+    return recover;
 }
 
 const std::vector<uint8_t>& AesEncryptionKey::iv() const
@@ -89,4 +106,47 @@ size_t AesEncryptionKey::size() const
 const SecByteBlock& AesEncryptionKey::key() const
 {
   return m_key;
+}
+
+std::string AesEncryptionKey::metaData() const
+{
+    web::json::value meta;
+
+    std::string keyHex;
+    StringSource ss(m_key.data(), m_key.size(), true, new HexEncoder(new StringSink(keyHex)));
+
+    web::json::value key;
+    key[U("value")] = web::json::value::string(keyHex);
+
+    std::vector<web::json::value> jsonIv;
+    for(auto it = m_iv.cbegin(); it != m_iv.cend(); ++it){
+        jsonIv.push_back(web::json::value::number(*it));
+    }
+
+    key[U("iv")] = web::json::value::array(jsonIv);
+    meta[U("key")] = key;
+
+    std::stringstream stream;
+    meta.serialize(stream);
+
+    return stream.str();
+}
+
+AesEncryptionKey AesEncryptionKey::fromJson(const std::string &meta)
+{
+    web::json::value metaJson = web::json::value::parse(meta);
+
+    std::string keyHex = metaJson.at(U("key")).at(U("value")).as_string();
+    std::string keyByte;
+    StringSource ss(keyHex, true, new HexDecoder(new StringSink(keyByte)));
+
+    std::vector<uint8_t> iv;
+    web::json::array ivArray = metaJson.at(U("key")).at(U("iv")).as_array();
+
+    for(auto it = ivArray.cbegin(); it != ivArray.cend(); ++it){
+        iv.push_back(static_cast<uint8_t>(it->as_number().to_uint32()));
+    }
+
+    return AesEncryptionKey(std::vector<uint8_t>(keyByte.begin(),keyByte.end()),
+                            iv);
 }

@@ -101,6 +101,18 @@ namespace OrthancPlugins
         {
           connection->setContainerName(c["ContainerName"].asString());
         }
+        if (c.isMember("EncryptionEnabled"))
+        {
+          connection->enableEncryption(c["EncryptionEnabled"].asBool());
+        }
+        if (c.isMember("AzureKeyVault"))
+        {
+          Json::Value jsonVault = c["AzureKeyVault"];
+          connection->setKeyVaultBaseUrl(jsonVault["baseUrl"].asString());
+          connection->setKeyVaultClientId(jsonVault["clientId"].asString());
+          connection->setKeyVaultClientSecret(jsonVault["clientSecret"].asString());
+          connection->setKeyVaultKeyId(jsonVault["kid"].asString());
+        }
      }
 
      connection->establishConnection();
