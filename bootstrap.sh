@@ -28,6 +28,7 @@ fi
 
 # INSTALL REQUIRED LIBRARIES
 vcpkg ${TRIPLET} install \
+  libuuid \
   boost-uuid \
   azure-storage-cpp \
   jsoncpp \

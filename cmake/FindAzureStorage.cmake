@@ -5,6 +5,7 @@ find_package(cpprestsdk REQUIRED)
 find_package(LibLZMA REQUIRED)
 find_package(Iconv REQUIRED)
 find_package(LibXml2 REQUIRED)
+find_package(UUID REQUIRED)
 find_package(JsonCpp REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Boost REQUIRED COMPONENTS log log_setup random system thread locale regex filesystem chrono date_time)
@@ -35,7 +36,8 @@ if(AZURESTORAGE_FOUND)
                         IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
 
   set_property(TARGET Azure::Storage
-               PROPERTY IMPORTED_LINK_INTERFACE_LIBRARIES 
+               PROPERTY IMPORTED_LINK_INTERFACE_LIBRARIES
+               ${UUID_LIBRARIES}
                Boost::thread
                Boost::log
                Boost::log_setup
