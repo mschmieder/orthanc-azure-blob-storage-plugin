@@ -21,12 +21,10 @@ RUN apt-get update -qq && apt-get install -y \
 COPY bootstrap.sh /bootstrap/
 COPY triplets /bootstrap/triplets
 
-ENV CFLAGS=-fPIC
-ENV CXXFLAGS=-fPIC
-ENV LDFLAGS=-fPIC
-
 WORKDIR /bootstrap
 RUN sudo bash bootstrap.sh
 RUN rm -rf /bootstrap/vcpkg/buildtrees/*
+RUN rm -rf /bootstrap/vcpkg/downloads/*
+RUN rm -rf /bootstrap/vcpkg/packages/*
 
 WORKDIR /
