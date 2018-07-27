@@ -1,4 +1,15 @@
 # Orthanc Plugin for storing in Azure Blob Storage
+<!-- TOC -->
+
+- [Orthanc Plugin for storing in Azure Blob Storage](#orthanc-plugin-for-storing-in-azure-blob-storage)
+  - [Encryption](#encryption)
+  - [Configuration](#configuration)
+    - [Enabling the Encryption](#enabling-the-encryption)
+  - [Building](#building)
+    - [Unix/MacOS](#unix-macos)
+    - [Dockerized Environment](#dockerized-environment)
+
+<!-- /TOC -->
 
 This plugin provides Azure Blob Storage capabilities to the Orthanc server. Azure already provides means to secure data at rest by simply enabling KeyVault encryption. This is usually not enough to properly secure PHI that's why this plugin also provides a highly secure client-side AES-256 encryption of all data stored within the Azure Blob Storage.
 
@@ -87,4 +98,11 @@ To build on a Unix/MacOS system use the provided scripts that are simply invokin
 # bootstrap the system in order to retrieve necessary thridparties libraries as well as the orthanc sources
 ./bootstrap.sh
 ./build.sh
+```
+
+### Dockerized Environment
+You can use docker to build the plugin for Unix. Make sure you have the latest `docker-compose` installed.
+
+```bash
+docker-compose run monolithic-build
 ```
