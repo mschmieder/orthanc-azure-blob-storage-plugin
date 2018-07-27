@@ -17,7 +17,7 @@ target_link_libraries(OrthancAzureBlobStorage
 
 #Linux specific switches
 if(NOT APPLE)
-  target_link_libraries(OrthancSqlServerStorage 
+  target_link_libraries(OrthancAzureBlobStorage 
                         uuid)
 endif()
 
