@@ -1,6 +1,7 @@
 #ifndef ENCRYPTION_KEY_H
 #define ENCRYPTION_KEY_H
 
+#include <vector>
 #include <string>
 
 namespace crypto

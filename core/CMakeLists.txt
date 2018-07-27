@@ -26,6 +26,5 @@ target_link_libraries(OrthancAzureBlobStorageCore cryptopp-static
                                                   Azure::Storage
                                                   cpprestsdk::cpprest)
 
-
 set_target_properties(OrthancAzureBlobStorageCore PROPERTIES VERSION   ${AZURE_BLOB_STORAGE_PLUGIN_VERSION}
                                                          SOVERSION ${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR} )

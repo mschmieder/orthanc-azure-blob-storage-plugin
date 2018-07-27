@@ -28,6 +28,7 @@ fi
 
 # INSTALL REQUIRED LIBRARIES
 vcpkg ${TRIPLET} install \
+  boost-uuid \
   azure-storage-cpp \
   jsoncpp \
   gtest \

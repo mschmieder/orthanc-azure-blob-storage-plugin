@@ -4,15 +4,9 @@
 #include <string>
 #include <vector>
 
-// For UUID generation
-extern "C"
-{
-#ifdef WIN32
-#include <rpc.h>
-#else
-#include <uuid/uuid.h>
-#endif
-}
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 using namespace az;
 
@@ -232,23 +226,8 @@ AuthEndpoint AzureKeyVaultClient::getAuthEndpoint()
 
 utility::string_t AzureKeyVaultClient::createGuid()
 {
-#ifdef WIN32
-  UUID uuid;
-  UuidCreate ( &uuid );
-
-  unsigned char * str;
-  UuidToStringA ( &uuid, &str );
-
-  std::string s( ( char* ) str );
-
-  RpcStringFreeA ( &str );
-#else
-  uuid_t uuid;
-  uuid_generate_random ( uuid );
-  char s[37];
-  uuid_unparse ( uuid, s );
-#endif
-  return s;
+    boost::uuids::random_generator generator;
+    return boost::uuids::to_string(generator());
 }
 
 pplx::task<web::http::http_response> key_operation(const utility::string_t& op,

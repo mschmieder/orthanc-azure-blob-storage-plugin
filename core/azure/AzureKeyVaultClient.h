@@ -46,7 +46,7 @@ namespace az
        * @return     encrypted key
        */
       utility::string_t wrapKey(const utility::string_t& data,
-                                const utility::string_t& kíd,
+                                const utility::string_t& kid,
                                 bool cvtToBase64 = true,
                                 const utility::string_t& alg = U("RSA-OAEP-256")) const;
 
