@@ -12,8 +12,8 @@ add_library(OrthancAzureBlobStorage SHARED ${SOURCES})
 target_link_libraries(OrthancAzureBlobStorage 
                       OrthancAzureBlobStorageCore
                       Orthanc::Plugins
-                      Azure::Storage
-                      JsonCpp::JsonCppStatic)
+                      azurestorage
+                      JsonCpp::JsonCpp)
 
 include(GenerateExportHeader)
 generate_export_header(OrthancAzureBlobStorage)
