@@ -40,7 +40,7 @@ ${cmake_exec} ${SOURCE_DIR} -G"Unix Makefiles" \
       ${osx_cmake_options} \
       ${CMAKE_ADDITIONAL_OPTIONS}
 
-${cmake_exec} --build . --config Debug --target install -- -j
+${cmake_exec} --build . --config Debug --target install -- -j2
 
 cd ${BUILD_DIR}/release
 ${cmake_exec} ${SOURCE_DIR} -G"Unix Makefiles" \
@@ -50,4 +50,4 @@ ${cmake_exec} ${SOURCE_DIR} -G"Unix Makefiles" \
       ${osx_cmake_options} \
       ${CMAKE_ADDITIONAL_OPTIONS}
 
-${cmake_exec} --build . --config Release --target install -- -j
+${cmake_exec} --build . --config Release --target install -- -j2
