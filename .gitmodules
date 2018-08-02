@@ -1,0 +1,3 @@
+[submodule "docker/OrthancDocker"]
+	path = docker/OrthancDocker
+	url = https://github.com/jodogne/OrthancDocker.git

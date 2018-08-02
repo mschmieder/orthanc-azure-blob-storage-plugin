@@ -5,7 +5,7 @@ services:
     image: orthanc-azure-blob-storage-plugin-sdk
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile.build
       args:
         ORTHANC_VERSION: 1.4.0 
     volumes:
@@ -17,3 +17,9 @@ services:
       INSTALL_DIR: /src/install
       CPPRESTSDK_ROOT: /cpprestsdk-dev
     command: /bin/bash -c "/bin/bash bootstrap.sh && /bin/bash build.sh"
+  build-orthanc:
+    image: orthanc
+    build:
+      context:
+      dockerfile: docker/Dockerfile.orthanc
+    

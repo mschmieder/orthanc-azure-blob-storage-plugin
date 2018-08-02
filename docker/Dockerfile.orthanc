@@ -1,0 +1,37 @@
+FROM ubuntu:16.04
+
+LABEL maintainer="Matthias Schmieder <schmieder.matthias@gmail.com>"
+LABEL Description="Orthanc, free DICOM server on Ubuntu-16.04" Vendor="The Orthanc project"
+
+WORKDIR /root/
+
+RUN apt-get update \
+    && apt-get install -y \
+        libjsoncpp1 \
+        libcrypto++ \
+        libssl1.0.0 \    
+        libxml2 \
+        uuid \
+        libboost-all-dev \
+        zlib1g \
+        liblzma5 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ADD ./OrthancDocker/orthanc/setup-locales.sh ./setup-locales.sh
+RUN bash ./setup-locales.sh
+
+ADD ./OrthancDocker/orthanc/download-orthanc.sh ./download-orthanc.sh
+RUN bash ./download-orthanc.sh
+
+ADD ./OrthancDocker/orthanc/create-config.sh ./create-config.sh
+RUN bash ./create-config.sh
+
+RUN rm ./setup-locales.sh ./download-orthanc.sh ./create-config.sh
+
+VOLUME [ "/var/lib/orthanc/db" ]
+EXPOSE 4242
+EXPOSE 8042
+
+ENTRYPOINT [ "Orthanc" ]
+CMD [ "/etc/orthanc/" ]
