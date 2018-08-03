@@ -1,5 +1,41 @@
 #!/bin/bash
 
+set -e
+ROOT_DIR=$(pwd)
+
+# INSTALL VCPKG
+if [ -n "${USE_VCPKG}" ]; then
+  if [ ! -d "vcpkg" ];then
+    git clone https://github.com/mschmieder/vcpkg.git
+    cd vcpkg
+    
+    git checkout fix-boost-compile-flags
+
+    ./bootstrap-vcpkg.sh
+
+    cp -f ${ROOT_DIR}/triplets/* triplets/
+  fi
+
+  # use the same cmake version that comes with VCPKG
+  if [ "$(uname)" == "Darwin" ]; then
+    TRIPLET=""
+  else
+    as_sudo="sudo"
+    TRIPLET="--triplet x64-linux-fpic"
+  fi
+
+  cd ${ROOT_DIR}
+
+  # INSTALL REQUIRED LIBRARIES
+  ${as_sudo} ./vcpkg/vcpkg ${TRIPLET} install \
+    libuuid \
+    boost-uuid \
+    azure-storage-cpp \
+    jsoncpp \
+    gtest \
+    cryptopp
+fi
+
 # DOWNLOAD ORTHANC SOURCES
 if [ -z "${ORTHANC_VERSION}" ];then
   ORTHANC_VERSION=1.3.1

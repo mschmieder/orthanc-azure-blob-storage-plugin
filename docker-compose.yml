@@ -1,25 +1,24 @@
 version: '3'
 
 services:
-  build-plugin:
-    image: orthanc-azure-blob-storage-plugin-sdk
+  build-sdk:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
     build:
       context: .
       dockerfile: docker/Dockerfile.build
       args:
-        ORTHANC_VERSION: 1.4.0 
+        ORTHANC_VERSION: 1.4.0
+        USE_VCPKG: 1
+  
+  build-plugin:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
     volumes:
       - .:/src
-    working_dir: /src
     environment:
-      CMAKE_BINARY: /opt/cmake/bin/cmake
+      ORTHANC_ROOT: /Orthanc-1.4.0
       BUILD_DIR: /src/build
       INSTALL_DIR: /src/install
-      CPPRESTSDK_ROOT: /cpprestsdk-dev
-    command: /bin/bash -c "/bin/bash bootstrap.sh && /bin/bash build.sh"
-  build-orthanc:
-    image: orthanc
-    build:
-      context:
-      dockerfile: docker/Dockerfile.orthanc
-    
+      VCPKG_ROOT: /vcpkg
+      USE_VCPKG: "1"
+    working_dir: /src
+    command: /bin/bash -c "/bin/bash build.sh"
