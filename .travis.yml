@@ -15,7 +15,7 @@ matrix:
       script:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
         - cd ${TRAVIS_BUILD_DIR} && docker-compose run build-plugin
-        - cd ${TRAVIS_BUILD_DIR}/build/install && tar cfzv ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
+        - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
     # - os: osx
     #   osx_image: xcode9.4   
     #   before_install:
