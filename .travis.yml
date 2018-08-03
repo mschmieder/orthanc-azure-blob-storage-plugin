@@ -16,7 +16,9 @@ matrix:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
         - echo "HELLO WORLD" >> install/text-linux.txt
         #- docker-compose run build-plugin
-        - cd install && tar cfzv ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
+      after_success:
+        - cd install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
+        - cd ${TRAVIS_BUILD_DIR} && ls -lachs
     # - os: osx
     #   osx_image: xcode9.4   
     #   before_install:
@@ -35,7 +37,7 @@ deploy:
     secure: kr9G+V2zMy/8QKGtlNPl+jytCc6Z0eq8HEmrsawbfnqWjudR3uw3YOPKS3XEvNlSxeaGj9VNdrYLEs/AuD1EB/F/pNmUn1/ZpUK/35L7Ybup7mfnTyAYvkODB0JkyCxmhGqCcGIptSOqR7Zmi4sWKMHC8uTzwsRYvJucA0cKzLMDmqMfnHpvGHCDgwztf3hbxVWF+MPPHkTDbDRBzoGy6kwbPKtR9IDp5CcJykmyn7KRqBqh7XfFS/FXUfmNq8a/j9684V2Iv8D6bIOvT30n7k9mcSwpdKJEmrZ1ZjyUfZFcSiGJ7WykQfTIDzAIhgpXSt/APOATfvxAxIvRQyejtAoqu4mIxW7kTgUZPGgyi5EQUKC4//Ft2GH/Fx5Mt02rsRyFJ48nGWfH4GJVZCzjMftuMshvg9OdRnlInh3uXFyIMR7oYwC5ztZx6OYpURQXQ33Cz58Bl2/x4EH+nfYCzbkVAuXzMzJfc4UHWK55UPGImgi41KNA7oJ13+hgBVrStQ1RCV7I/Mp7SKrfk2gd1TimdxRNMawAG8S+IZ5IZ8QpFy+Jy9i5TPDx8MXzk0hplMyIlyB7e/mZUW9Fw/ndJ2Hc6flvJ1CQWSS/LuGTNCetjVJZ3CoCPQh52Yfb8tMpha92QOtwby+oJ1MQmBEWllGeRw61Q4DJ9EkBXiMwVYg=
   file_glob: true
   file: 
-    - orthanc-azure-blob-storage-plugin-*.tar.gz
+    - ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-*.tar.gz
   skip_cleanup: true
   on:
     tags: false
