@@ -6,14 +6,16 @@ include_directories("${PROJECT_SOURCE_DIR}/plugin")
 
 add_executable(AzureStorageTests StorageTest.cpp)
 target_link_libraries(AzureStorageTests OrthancAzureBlobStorage
-                                        Azure::Storage
-                                        GTest::GTest)
+                                        ${AZURESTORAGE_LIBRARIES}
+                                        GTest::GTest
+                                        Boost::system)
 
 #gtest_add_tests(TARGET AzureStorageTests TEST_PREFIX azure:)
 
 
 add_executable(CryptoTests CryptoTest.cpp)
 target_link_libraries(CryptoTests OrthancAzureBlobStorageCore
-                                  GTest::GTest)
+                                  GTest::GTest
+                                  Boost::system)
 
 #gtest_add_tests(TARGET CryptoTests TEST_PREFIX crypto:)
