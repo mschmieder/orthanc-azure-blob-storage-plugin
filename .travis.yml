@@ -13,12 +13,41 @@ matrix:
         - sudo apt-get update
         - sudo apt-get -y install docker-ce
       script:
-      - docker-compose run build-plugin
+        - mkdir -p install
+        - docker-compose run build-plugin
+        - cd install && tar -czvf ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
+        deploy:
+          provider: releases
+          api_key:
+            secure: kr9G+V2zMy/8QKGtlNPl+jytCc6Z0eq8HEmrsawbfnqWjudR3uw3YOPKS3XEvNlSxeaGj9VNdrYLEs/AuD1EB/F/pNmUn1/ZpUK/35L7Ybup7mfnTyAYvkODB0JkyCxmhGqCcGIptSOqR7Zmi4sWKMHC8uTzwsRYvJucA0cKzLMDmqMfnHpvGHCDgwztf3hbxVWF+MPPHkTDbDRBzoGy6kwbPKtR9IDp5CcJykmyn7KRqBqh7XfFS/FXUfmNq8a/j9684V2Iv8D6bIOvT30n7k9mcSwpdKJEmrZ1ZjyUfZFcSiGJ7WykQfTIDzAIhgpXSt/APOATfvxAxIvRQyejtAoqu4mIxW7kTgUZPGgyi5EQUKC4//Ft2GH/Fx5Mt02rsRyFJ48nGWfH4GJVZCzjMftuMshvg9OdRnlInh3uXFyIMR7oYwC5ztZx6OYpURQXQ33Cz58Bl2/x4EH+nfYCzbkVAuXzMzJfc4UHWK55UPGImgi41KNA7oJ13+hgBVrStQ1RCV7I/Mp7SKrfk2gd1TimdxRNMawAG8S+IZ5IZ8QpFy+Jy9i5TPDx8MXzk0hplMyIlyB7e/mZUW9Fw/ndJ2Hc6flvJ1CQWSS/LuGTNCetjVJZ3CoCPQh52Yfb8tMpha92QOtwby+oJ1MQmBEWllGeRw61Q4DJ9EkBXiMwVYg=
+          file: orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz
+          skip_cleanup: true
+          overwrite: true
+          on:
+            tags: false
     - os: osx
       osx_image: xcode9.4   
       before_install:
         - brew update
-        - brew install openssl cpprestsdk jsoncpp gettext cryptopp boost libxml2 ossp-uuid wget
+        - brew install wget
+      env: 
+        - USE_VCPKG=1
       script:
       - bash bootstrap.sh
       - bash build.sh
+      - cd install && tar -czvf ../orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
+      deploy:
+        provider: releases
+        api_key:
+          secure: kr9G+V2zMy/8QKGtlNPl+jytCc6Z0eq8HEmrsawbfnqWjudR3uw3YOPKS3XEvNlSxeaGj9VNdrYLEs/AuD1EB/F/pNmUn1/ZpUK/35L7Ybup7mfnTyAYvkODB0JkyCxmhGqCcGIptSOqR7Zmi4sWKMHC8uTzwsRYvJucA0cKzLMDmqMfnHpvGHCDgwztf3hbxVWF+MPPHkTDbDRBzoGy6kwbPKtR9IDp5CcJykmyn7KRqBqh7XfFS/FXUfmNq8a/j9684V2Iv8D6bIOvT30n7k9mcSwpdKJEmrZ1ZjyUfZFcSiGJ7WykQfTIDzAIhgpXSt/APOATfvxAxIvRQyejtAoqu4mIxW7kTgUZPGgyi5EQUKC4//Ft2GH/Fx5Mt02rsRyFJ48nGWfH4GJVZCzjMftuMshvg9OdRnlInh3uXFyIMR7oYwC5ztZx6OYpURQXQ33Cz58Bl2/x4EH+nfYCzbkVAuXzMzJfc4UHWK55UPGImgi41KNA7oJ13+hgBVrStQ1RCV7I/Mp7SKrfk2gd1TimdxRNMawAG8S+IZ5IZ8QpFy+Jy9i5TPDx8MXzk0hplMyIlyB7e/mZUW9Fw/ndJ2Hc6flvJ1CQWSS/LuGTNCetjVJZ3CoCPQh52Yfb8tMpha92QOtwby+oJ1MQmBEWllGeRw61Q4DJ9EkBXiMwVYg=
+        file: orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz
+        skip_cleanup: true
+        overwrite: true
+        on:
+          tags: false
+    
+    
+      
+      
+      
+      
