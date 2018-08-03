@@ -12,6 +12,7 @@ before_install:
   - sudo apt-get -y install docker-ce tar
 
 script:
+  - mkdir -p install
   - docker-compose run build-plugin
   - cd install && tar -czvf ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
 
