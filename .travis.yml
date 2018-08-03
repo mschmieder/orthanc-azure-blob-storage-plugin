@@ -14,8 +14,8 @@ matrix:
         - sudo apt-get -y install docker-ce
       script:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
-        - cd ${TRAVIS_BUILD_DIR} && docker-compose run build-plugin
-        - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
+        - docker-compose run build-plugin
+        - cd install && tar cfzv ../orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
     # - os: osx
     #   osx_image: xcode9.4   
     #   before_install:
@@ -23,10 +23,11 @@ matrix:
     #     - brew install wget
     #   env: 
     #     - USE_VCPKG=1
+    #     - ORTHANC_VERSION=1.4.0
     #   script:
     #   - bash bootstrap.sh
     #   - bash build.sh
-    #   - cd install && tar -czvf ../orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
+    #   - cd install && tar czvf ../orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
 deploy:
   provider: releases
   api_key:
@@ -36,5 +37,5 @@ deploy:
   skip_cleanup: true
   overwrite: true
   on:
-    tags: true
+    tags: false
     all_branches: true
