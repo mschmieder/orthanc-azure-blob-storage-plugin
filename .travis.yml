@@ -17,19 +17,19 @@ matrix:
         - docker-compose run build-plugin
       after_success:
         - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
-    - os: osx
-      osx_image: xcode9.4   
-      before_install:
-        - brew update
-        - brew install wget gcc7
-      env: 
-        - USE_VCPKG=1
-        - ORTHANC_VERSION=1.4.0
-      script:
-        - bash bootstrap.sh
-        - bash build.sh
-      after_success:
-        - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
+    # - os: osx
+    #   osx_image: xcode9.4   
+    #   before_install:
+    #     - brew update
+    #     - brew install wget gcc@7
+    #   env: 
+    #     - USE_VCPKG=1
+    #     - ORTHANC_VERSION=1.4.0
+    #   script:
+    #     - bash bootstrap.sh
+    #     - bash build.sh
+    #   after_success:
+    #     - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
 deploy:
   provider: releases
   api_key:
