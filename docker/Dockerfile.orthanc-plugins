@@ -1,4 +1,5 @@
-FROM mschmieder/orthanc 
+ARG ORTHANC_VERSION=1.4.1
+FROM mschmieder/orthanc:${ORTHANC_VERSION}
 
 RUN apt-get update -qq && apt-get install -y \
        liblzma5 \
