@@ -112,4 +112,4 @@ install(TARGETS OrthancAzureBlobStorage
 install(FILES plugin/resources/azure-blob-storage.json 
         DESTINATION "plugin")
 
-add_subdirectory("tests")
+#add_subdirectory("tests")

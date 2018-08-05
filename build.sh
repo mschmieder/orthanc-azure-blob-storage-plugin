@@ -6,17 +6,9 @@ if [ -z "${ORTHANC_ROOT}" ];then
   ORTHANC_ROOT=$(find ${SOURCE_DIR} -name "Orthanc-*" | sort -r | head -n1)
 fi
 
-if [ -z "${BUILD_DIR}" ]; then
-  BUILD_DIR=${SOURCE_DIR}/build/
-fi
-
-if [ -z "${VCPKG_ROOT}" ]; then
-   VCPKG_ROOT=${SOURCE_DIR}/vcpkg
- fi
-
-if [ -z "${INSTALL_DIR}" ]; then
-  INSTALL_DIR=${SOURCE_DIR}/install/
-fi
+BUILD_DIR=${BUILD_DIR:="${SOURCE_DIR}/build/"}
+VCPKG_ROOT=${VCPKG_ROOT:="${SOURCE_DIR}/vcpkg"}
+INSTALL_DIR=${INSTALL_DIR:="${SOURCE_DIR}/install/"}
 
 if [ -n "${CPPRESTSDK_ROOT}" ]; then
   CMAKE_PREFIX_PATH="${CPPRESTSDK_ROOT};${CMAKE_PREFIX_PATH}"
@@ -52,9 +44,7 @@ else
   export CXXFLAGS="-fPIC"
 fi
 
-if [ -z "${CMAKE_BINARY}" ]; then
-  CMAKE_BINARY=cmake
-fi
+CMAKE_BINARY=${CMAKE_BINARY:=cmake}
 
 mkdir -p ${BUILD_DIR}/{debug,release}
 mkdir -p ${INSTALL_DIR}
@@ -75,9 +65,8 @@ ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
       -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
       -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
       -DCMAKE_BUILD_TYPE=Release \
-      ${CMAKE_ADDITIONAL_OPTIONS}
+      ${CMAKE_ADDITIONAL_OPTIONS} \
       ${osx_cmake_options} \
       ${vcpkg_cmake_options} \
       
-
 ${CMAKE_BINARY} --build . --config Release --target install -- -j2
