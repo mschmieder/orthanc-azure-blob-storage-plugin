@@ -33,10 +33,13 @@ if(NOT USE_VCPGK)
 
     # Prefer the latest (make the latest one first)
     list(REVERSE OPENSSL_ROOT_DIR)
+
+    # Find required packages
+    find_package(OpenSSL REQUIRED)
+    include_directories(${OPENSSL_INCLUDE_DIR})
   endif()
 endif()
 
-# Find required packages
 find_package(Orthanc REQUIRED)  
 find_package(JsonCpp REQUIRED)
 find_package(CryptoPP REQUIRED)
