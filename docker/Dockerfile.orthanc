@@ -1,10 +1,32 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:16.04
 
-RUN apt-get update -qq && apt-get install -y \
-       wget \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+ARG ORTHANC_VERSION=1.4.1
+ENV ORTHANC_VERSION=${ORTHANC_VERSION}
 
-# download plugin from github
+LABEL Maintainer "Matthias Schmieder <schmieder.matthias@gmail.com>"
 
-FROM jodogne/orthanc:1.4.1
+WORKDIR /root/
+
+ADD docker/OrthancDocker/orthanc/setup-locales.sh ./setup-locales.sh
+RUN bash ./setup-locales.sh
+
+ADD docker/OrthancDocker/orthanc/download-orthanc.sh ./download-orthanc.sh
+
+# patch script to download specific orthanc version instead of 'mainline'
+RUN sed "s/mainline/${ORTHANC_VERSION}/" -i ./download-orthanc.sh 
+
+RUN bash ./download-orthanc.sh
+
+ADD docker/OrthancDocker/orthanc/create-config.sh ./create-config.sh
+RUN bash ./create-config.sh
+
+RUN rm ./setup-locales.sh ./download-orthanc.sh ./create-config.sh
+
+VOLUME [ "/var/lib/orthanc/db" ]
+EXPOSE 4242
+EXPOSE 8042
+
+ENTRYPOINT [ "Orthanc" ]
+CMD [ "/etc/orthanc/" ]
+
+

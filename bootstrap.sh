@@ -29,6 +29,7 @@ if [ -n "${USE_VCPKG}" ]; then
   # INSTALL REQUIRED LIBRARIES
   ${as_sudo} ./vcpkg/vcpkg ${TRIPLET} install \
     libuuid \
+    liblzma \
     boost-uuid \
     azure-storage-cpp \
     jsoncpp \

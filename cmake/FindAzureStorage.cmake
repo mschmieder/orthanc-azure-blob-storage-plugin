@@ -19,8 +19,7 @@ find_path(AzureStorage_INCLUDE_DIR
 find_library(AzureStorage_LIBRARY
   NAMES
   azurestorage
-  PATHS lib
-  PATH_SUFFIXES
+  PATH_SUFFIXES lib
   HINTS ${AZURESTORAGE_ROOT} ${AZURESTORAGE_ROOT_DIR})
 
 find_package_handle_standard_args(AzureStorage

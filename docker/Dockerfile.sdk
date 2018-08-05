@@ -1,0 +1,83 @@
+FROM ubuntu:16.04
+
+ARG ORTHANC_VERSION=1.4.1
+ENV ORTHANC_VERSION=${ORTHANC_VERSION}
+
+RUN apt-get update -qq && apt-get install -y \
+      wget \
+      cmake \
+      git \
+      gcc \
+      g++ \
+      libgtest-dev \
+      libjsoncpp-dev \
+      libcrypto++-dev \
+      libssl-dev \    
+      libxml2-dev \
+      uuid-dev \
+      libboost-all-dev \
+      zlib1g-dev \
+      libcpprest-dev \
+      liblzma-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN export ORHTANC_FILENAME=Orthanc-${ORTHANC_VERSION}.tar.gz \
+    && wget -q -O ${ORHTANC_FILENAME} https://www.orthanc-server.com/downloads/get.php?path=/orthanc/${ORHTANC_FILENAME} \
+    && tar -xzf ${ORHTANC_FILENAME} \
+    && rm ${ORHTANC_FILENAME}
+
+ENV ORTHANC_ROOT="/Orthanc-${ORTHANC_VERSION}"
+
+# install latest cmake version
+RUN wget -qq -O cmake_install.sh https://cmake.org/files/v3.12/cmake-3.12.0-Linux-x86_64.sh \
+    && mkdir -p /opt/cmake \
+    && bash cmake_install.sh --prefix=/opt/cmake --skip-license
+
+ENV CMAKE_BINARY=/opt/cmake/bin/cmake
+ENV PATH=/opt/cmake/bin:${PATH}
+
+ENV CPPRESTSDK_ROOT=/cpprestsdk-dev
+RUN git clone https://github.com/Microsoft/cpprestsdk.git -b v2.10.1
+
+RUN cd /cpprestsdk/Release \
+    && export CFLAGS=-fPIC \
+    && export CXXFLAGS=-fPIC \
+    && mkdir build.release \
+    && cd build.release \
+    && cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_SAMPLES=OFF \
+      -DCMAKE_INSTALL_PREFIX=${CPPRESTSDK_ROOT} \
+    && make -j4 \
+    && make install
+
+
+ENV AZURESTORAGE_ROOT=/azure-storage-cpp-dev
+
+COPY ./3rdparty/azure-storage-cpp/cpprestsdk-2.10-compatibility.patch ./
+
+RUN git clone https://github.com/Azure/azure-storage-cpp.git -b v5.0.0 \
+    && cd azure-storage-cpp \
+    && git apply /cpprestsdk-2.10-compatibility.patch \
+    && rm /cpprestsdk-2.10-compatibility.patch
+
+RUN cd /azure-storage-cpp/Microsoft.WindowsAzure.Storage \
+    && export CFLAGS="-fPIC -Wno-deprecated-declarations" \
+    && export CXXFLAGS="-fPIC -Wno-deprecated-declarations" \
+    && mkdir build.release \
+    && cd build.release \
+    && cmake .. \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_SAMPLES=OFF \
+      -DCMAKE_PREFIX_PATH=${CPPRESTSDK_ROOT} \
+      -DCMAKE_INSTALL_PREFIX=${AZURESTORAGE_ROOT} \
+    && make -j4 \
+    && make install
+
+RUN rm -rf /azure-storage-cpp\
+    && rm -rf /cpprestsdk

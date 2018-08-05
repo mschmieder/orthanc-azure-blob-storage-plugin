@@ -14,7 +14,8 @@ matrix:
         - sudo apt-get -y install docker-ce
       script:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
-        - docker-compose run build-plugin
+        - docker-compose run plugin-build
+        - docker-compose build orthanc-plugins
       after_success:
         - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
     # - os: osx

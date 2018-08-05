@@ -1,5 +1,12 @@
+find_package(GTest)
+
+if(NOT GTEST_FOUND)
+    include(FetchGoogletest)
+    set(GTEST_BOTH_LIBRARIES gtest gtest_main)
+endif()
+
 include(GoogleTest)
-find_package(GTest REQUIRED)
+
 enable_testing()
 
 include_directories("${PROJECT_SOURCE_DIR}/plugin")
@@ -7,7 +14,7 @@ include_directories("${PROJECT_SOURCE_DIR}/plugin")
 add_executable(AzureStorageTests StorageTest.cpp)
 target_link_libraries(AzureStorageTests OrthancAzureBlobStorage
                                         ${AZURESTORAGE_LIBRARIES}
-                                        GTest::GTest
+                                        ${GTEST_BOTH_LIBRARIES}
                                         Boost::system)
 
 #gtest_add_tests(TARGET AzureStorageTests TEST_PREFIX azure:)
@@ -15,7 +22,7 @@ target_link_libraries(AzureStorageTests OrthancAzureBlobStorage
 
 add_executable(CryptoTests CryptoTest.cpp)
 target_link_libraries(CryptoTests OrthancAzureBlobStorageCore
-                                  GTest::GTest
+                                  ${GTEST_BOTH_LIBRARIES}
                                   Boost::system)
 
 #gtest_add_tests(TARGET CryptoTests TEST_PREFIX crypto:)

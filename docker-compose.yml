@@ -1,24 +1,42 @@
 version: '3'
 
 services:
-  build-sdk:
-    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
+  sdk-build:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04
     build:
       context: .
-      dockerfile: docker/Dockerfile.build
+      dockerfile: docker/Dockerfile.sdk
       args:
-        ORTHANC_VERSION: 1.4.0
-        USE_VCPKG: 1
-  
-  build-plugin:
-    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
+        ORTHANC_VERSION: 1.4.1
+
+  plugin-build:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04
     volumes:
       - .:/src
     environment:
-      ORTHANC_ROOT: /Orthanc-1.4.0
       BUILD_DIR: /src/build
       INSTALL_DIR: /src/install
-      VCPKG_ROOT: /vcpkg
-      USE_VCPKG: "1"
     working_dir: /src
     command: /bin/bash -c "/bin/bash build.sh"
+
+  orthanc:
+    image: mschmieder/orthanc
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.orthanc
+      args:
+        ORTHANC_VERIONS: 1.4.1
+    ports:
+      - "8042:8042"
+      - "4242:4242"
+  
+  orthanc-plugins:
+    image: mschmieder/orthanc-plugins
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.orthanc-plugins
+    ports:
+      - "8042:8042"
+      - "4242:4242"
+    volumes:
+      - ./plugin-config.json:/etc/orthanc/plugin-config.json

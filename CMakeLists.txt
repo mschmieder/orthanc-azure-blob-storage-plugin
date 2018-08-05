@@ -46,8 +46,8 @@ if(USE_VCPKG)
   find_package(AzureStorage REQUIRED)
   set(AZURESTORAGE_LIBRARIES Azure::Storage)
 else()
-  if(USE_SYSTEM_AZURESTORAGECPP)
-    find_package(AzureStorage REQUIRED)
+  find_package(AzureStorage QUIET)
+  if(AzureStorage_FOUND)
     set(AZURESTORAGE_LIBRARIES Azure::Storage)
   else()
     include(FetchAzureStorageCpp)
@@ -55,6 +55,61 @@ else()
   endif()
 endif()
 
-add_subdirectory("core")
-add_subdirectory("plugin")
+include_directories(core)
+include_directories(plugin)
+
+set(SOURCES_CORE  core/Crypto.h
+                  core/Crypto.cpp
+                  core/CryptoMetaData.h
+                  core/CryptoMetaData.cpp
+                  core/Cipher.h
+                  core/Cipher.cpp
+                  core/azure/AuthEndpoint.h
+                  core/azure/AuthEndpoint.cpp
+                  core/azure/JwtToken.h
+                  core/azure/JwtToken.cpp
+                  core/azure/AzureKeyVaultException.h
+                  core/azure/AzureKeyVaultClient.h
+                  core/azure/AzureKeyVaultClient.cpp
+                  core/azure/AzureKeyVaultEncryptionKey.h
+                  core/azure/AzureKeyVaultEncryptionKey.cpp
+                  core/EncryptionKey.h
+                  core/AesEncryptionKey.h
+                  core/AesEncryptionKey.cpp)
+
+set(SOURCES_PLUGIN  plugin/AzureBlobStorageException.h
+                    plugin/Configuration.h
+                    plugin/Configuration.cpp
+                    plugin/AzureBlobStorageConnection.h
+                    plugin/AzureBlobStorageConnection.cpp
+                    plugin/AzureBlobStorageArea.h
+                    plugin/AzureBlobStorageArea.cpp
+                    plugin/Plugin.cpp)
+
+add_library(OrthancAzureBlobStorage SHARED ${SOURCES_CORE} ${SOURCES_PLUGIN})
+
+target_link_libraries(OrthancAzureBlobStorage
+                      Orthanc::Plugins
+                      ${AZURESTORAGE_LIBRARIES}
+                      CryptoPP::CryptoPP
+                      JsonCpp::JsonCpp)
+
+include(GenerateExportHeader)
+generate_export_header(OrthancAzureBlobStorage)
+
+target_include_directories(OrthancAzureBlobStorage PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+
+target_compile_definitions(OrthancAzureBlobStorage
+                           PRIVATE "-DAZURE_BLOB_STORAGE_PLUGIN_VERSION=\"${AZURE_BLOB_STORAGE_PLUGIN_VERSION}\"")
+
+set_target_properties(OrthancAzureBlobStorage PROPERTIES VERSION   ${AZURE_BLOB_STORAGE_PLUGIN_VERSION}
+                                                         SOVERSION ${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR} )
+
+install(TARGETS OrthancAzureBlobStorage
+        LIBRARY DESTINATION plugin
+        ARCHIVE DESTINATION plugin)
+
+install(FILES plugin/resources/azure-blob-storage.json 
+        DESTINATION "plugin")
+
 add_subdirectory("tests")
