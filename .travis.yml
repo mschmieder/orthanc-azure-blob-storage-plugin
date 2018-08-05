@@ -16,6 +16,9 @@ matrix:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
         - docker-compose run plugin-build
         - docker-compose build orthanc-plugins
+        - docker tag mschmieder/orthanc-plugins mschmieder/orthanc-plugins:${TRAVIS_BRANCH} 
+        - if [[ "$TRAVIS_BRANCH" == "master" ]]; docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ; fi
+        - if [[ "$TRAVIS_BRANCH" == "master" ]]; docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH} ; fi
       after_success:
         - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-linux-$TRAVIS_BRANCH.tar.gz *
     # - os: osx
