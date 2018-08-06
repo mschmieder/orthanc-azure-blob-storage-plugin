@@ -18,12 +18,12 @@ matrix:
         - docker-compose build orthanc-plugins
         - docker tag mschmieder/orthanc-plugins mschmieder/orthanc-plugins:${TRAVIS_BRANCH} 
         - |
-          if [[ "${$TRAVIS_BRANCH}" == "master" ]]; then
+          if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
             docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
             docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
           fi
         - |
-          if [ -n "${$TRAVIS_TAG}" ]; then
+          if [ -n "${TRAVIS_TAG}" ]; then
             docker tag mschmieder/orthanc-plugins:${TRAVIS_BRANCH} mschmieder/orthanc-plugins:latest  
             docker push mschmieder/orthanc-plugins:latest 
           fi
@@ -41,7 +41,7 @@ matrix:
     #     - bash bootstrap.sh
     #     - bash build.sh
     #   after_success:
-    #     - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-${$TRAVIS_BRANCH}.tar.gz *
+    #     - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-${TRAVIS_BRANCH}.tar.gz *
 deploy:
   - provider: releases
     api_key:
