@@ -1,4 +1,6 @@
 # Orthanc Plugin for storing in Azure Blob Storage
+[![Build Status](https://travis-ci.org/mschmieder/orthanc-azure-blob-storage-plugin.svg?branch=master)](https://travis-ci.org/mschmieder/orthanc-azure-blob-storage-plugin)
+
 <!-- TOC -->
 
 - [Orthanc Plugin for storing in Azure Blob Storage](#orthanc-plugin-for-storing-in-azure-blob-storage)
