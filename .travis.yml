@@ -17,10 +17,10 @@ matrix:
         - docker-compose run plugin-build
         - docker-compose build orthanc-plugins
         - docker tag mschmieder/orthanc-plugins mschmieder/orthanc-plugins:${TRAVIS_BRANCH} 
-        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ; fi
-        - if [[ "$TRAVIS_BRANCH" == "master" ]]; then docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH} ; fi
+        - if [[ "${$TRAVIS_BRANCH}" == "master" ]]; then docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} ; fi
+        - if [[ "${$TRAVIS_BRANCH}" == "master" ]]; then docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH} ; fi
       after_success:
-        - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/plugin-linux.$TRAVIS_BRANCH.tar.gz *
+        - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/plugin-linux.${TRAVIS_BRANCH}.tar.gz *
     # - os: osx
     #   osx_image: xcode9.4   
     #   before_install:
@@ -33,7 +33,7 @@ matrix:
     #     - bash bootstrap.sh
     #     - bash build.sh
     #   after_success:
-    #     - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-$TRAVIS_BRANCH.tar.gz *
+    #     - cd ${TRAVIS_BUILD_DIR}/install && tar cfzv ${TRAVIS_BUILD_DIR}/orthanc-azure-blob-storage-plugin-osx-${$TRAVIS_BRANCH}.tar.gz *
 deploy:
   provider: releases
   api_key:
