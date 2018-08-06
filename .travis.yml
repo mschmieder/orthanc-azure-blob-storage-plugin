@@ -16,15 +16,14 @@ matrix:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
         - docker-compose run plugin-build
         - docker-compose build orthanc-plugins
-        - docker tag mschmieder/orthanc-plugins mschmieder/orthanc-plugins:${TRAVIS_BRANCH} 
+        - docker tag mschmieder/orthanc-plugins:latest mschmieder/orthanc-plugins:${TRAVIS_BRANCH} 
         - |
           if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
             docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
             docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
           fi
         - |
-          if [ -n "${TRAVIS_TAG}" ]; then
-            docker tag mschmieder/orthanc-plugins:${TRAVIS_BRANCH} mschmieder/orthanc-plugins:latest  
+          if [ -n "${TRAVIS_TAG}" ]; then  
             docker push mschmieder/orthanc-plugins:latest 
           fi
       after_success:
