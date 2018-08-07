@@ -23,7 +23,9 @@ matrix:
             docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
           fi
         - |
-          if [ -n "${TRAVIS_TAG}" ]; then  
+          if [ -n "${TRAVIS_TAG}" ]; then
+            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} 
+            docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
             docker push mschmieder/orthanc-plugins:latest 
           fi
       after_success:
