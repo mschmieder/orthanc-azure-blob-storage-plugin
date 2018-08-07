@@ -3,7 +3,7 @@ set -e
 SOURCE_DIR=$(pwd)
 
 if [ -z "${ORTHANC_ROOT}" ];then
-  ORTHANC_ROOT=$(find ${SOURCE_DIR} -name "Orthanc-*" | sort -r | head -n1)
+  ORTHANC_ROOT=$(find ${SOURCE_DIR} -name "Orthanc-${ORTHANC_VERSION}*" | sort -r | head -n1)
 fi
 
 BUILD_DIR=${BUILD_DIR:="${SOURCE_DIR}/build/"}
@@ -31,16 +31,16 @@ fi
 if [ "$(uname)" == "Darwin" ]; then
   if [ -n "${USE_VCPKG}" ]; then
     CMAKE_BINARY=$(find ${VCPKG_ROOT} -type f -perm +111 -name cmake)
-    vcpkg_cmake_options="-DUSE_VCPKG:BOOL=ON -DCMAKE_TOOLCHAIN_FILE:PATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    VCPKG_CMAKE_OPTIONS="-DUSE_VCPKG:BOOL=ON -DCMAKE_TOOLCHAIN_FILE:PATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
   fi
-  osx_cmake_options="-DCMAKE_FIND_FRAMEWORK=LAST"
+  OSX_CMAKE_OPTIONS="-DCMAKE_FIND_FRAMEWORK=LAST"
 
-  export CXX_FLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
-  export C_FLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
+  export CXXFLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
+  export CFLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
 else
   if [ -n "${USE_VCPKG}" ]; then
     CMAKE_BINARY=$(find ${VCPKG_ROOT} -type f -executable -name cmake)
-    vcpkg_cmake_options="-DVCPKG_TARGET_TRIPLET=x64-linux-fpic -DUSE_VCPKG:BOOL=ON -DCMAKE_TOOLCHAIN_FILE:PATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    VCPKG_CMAKE_OPTIONS="-DVCPKG_TARGET_TRIPLET=x64-linux-fpic -DUSE_VCPKG:BOOL=ON -DCMAKE_TOOLCHAIN_FILE:PATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
   fi
 
   export CFLAGS="-fPIC"
@@ -51,14 +51,29 @@ CMAKE_BINARY=${CMAKE_BINARY:=cmake}
 
 mkdir -p ${BUILD_DIR}/{debug,release}
 mkdir -p ${INSTALL_DIR}
+echo "|------------------------------------------------------------------------------------------------------------------------------"
+echo "|Configuration Setting:"
+echo "|------------------------------------------------------------------------------------------------------------------------------"
+echo "|  ORTHANC_ROOT:..............${ORTHANC_ROOT}"
+echo "|  ORTHANC_VERSION:...........${ORTHANC_VERSION}"
+echo "|  CXXFLAGS:..................${CXXFLAGS}"
+echo "|  BUILD_DIR:.................${BUILD_DIR}"
+echo "|  VCPKG_ROOT:................${VCPKG_ROOT}"
+echo "|  INSTALL_DIR:...............${INSTALL_DIR}"
+echo "|  CMAKE_BINARY:..............${CMAKE_BINARY}"
+echo "|  CMAKE_PREFIX_PATH:.........${CMAKE_PREFIX_PATH}"
+echo "|  CMAKE_ADDITIONAL_OPTIONS:..${CMAKE_PREFIX_PATH}"
+echo "|  OSX_CMAKE_OPTIONS:.........${OSX_CMAKE_OPTIONS}"
+echo "|  VCPKG_CMAKE_OPTIONS:.......${VCPKG_CMAKE_OPTIONS}"
+echo "|------------------------------------------------------------------------------------------------------------------------------"
 
 cd ${BUILD_DIR}/debug
 ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
       -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
       -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
       -DCMAKE_BUILD_TYPE=Debug \
-      ${osx_cmake_options} \
-      ${vcpkg_cmake_options} \
+      ${OSX_CMAKE_OPTIONS} \
+      ${VCPKG_CMAKE_OPTIONS} \
       ${CMAKE_ADDITIONAL_OPTIONS}
 
 ${CMAKE_BINARY} --build . --config Debug --target install -- -j2
@@ -69,7 +84,7 @@ ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
       -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
       -DCMAKE_BUILD_TYPE=Release \
       ${CMAKE_ADDITIONAL_OPTIONS} \
-      ${osx_cmake_options} \
-      ${vcpkg_cmake_options} \
+      ${OSX_CMAKE_OPTIONS} \
+      ${VCPKG_CMAKE_OPTIONS} \
       
 ${CMAKE_BINARY} --build . --config Release --target install -- -j2
