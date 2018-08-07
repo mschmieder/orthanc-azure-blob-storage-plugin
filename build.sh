@@ -34,6 +34,9 @@ if [ "$(uname)" == "Darwin" ]; then
     vcpkg_cmake_options="-DUSE_VCPKG:BOOL=ON -DCMAKE_TOOLCHAIN_FILE:PATH=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
   fi
   osx_cmake_options="-DCMAKE_FIND_FRAMEWORK=LAST"
+
+  export CXX_FLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
+  export C_FLAGS="-fPIC -Wno-cast-qual -Wno-pessimizing-move -Wno-unused-lambda-capture"
 else
   if [ -n "${USE_VCPKG}" ]; then
     CMAKE_BINARY=$(find ${VCPKG_ROOT} -type f -executable -name cmake)
@@ -49,16 +52,16 @@ CMAKE_BINARY=${CMAKE_BINARY:=cmake}
 mkdir -p ${BUILD_DIR}/{debug,release}
 mkdir -p ${INSTALL_DIR}
 
-# cd ${BUILD_DIR}/debug
-# ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
-#       -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
-#       -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
-#       -DCMAKE_BUILD_TYPE=Debug \
-#       ${osx_cmake_options} \
-#       ${vcpkg_cmake_options} \
-#       ${CMAKE_ADDITIONAL_OPTIONS}
+cd ${BUILD_DIR}/debug
+${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
+      -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
+      -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
+      -DCMAKE_BUILD_TYPE=Debug \
+      ${osx_cmake_options} \
+      ${vcpkg_cmake_options} \
+      ${CMAKE_ADDITIONAL_OPTIONS}
 
-# ${CMAKE_BINARY} --build . --config Debug --target install -- -j2
+${CMAKE_BINARY} --build . --config Debug --target install -- -j2
 
 cd ${BUILD_DIR}/release
 ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
