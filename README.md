@@ -106,5 +106,21 @@ To build on a Unix/MacOS system use the provided scripts that are simply invokin
 You can use docker to build the plugin for Unix. Make sure you have the latest `docker-compose` installed.
 
 ```bash
-docker-compose run monolithic-build
+docker-compose run plugin-build
 ```
+
+### Run Orthanc with AzureBlobStoragePlugin
+The latest Orthanc with the plugin already installed is available on dockerhub. In order to have the plugin work correctly make sure you add a proper configuration when running your container.
+Create a file containing the json content described as above and then mount that file into `/etc/orthanc/` on the docker environment. Also make sure you assign all ports correctly
+
+```bash
+docker run -p 8042:8042 -p 4242:4242 -v plugin-config.json:/etc/orthanc/plugin-config.json mschmieder/orthanc-plugins:latest
+```
+
+The default Orthanc config is being used. In order to access your Orthanc instance you will need to provide the user credentials
+
+````
+Username: orthanc
+Password: orthanc
+````
+
