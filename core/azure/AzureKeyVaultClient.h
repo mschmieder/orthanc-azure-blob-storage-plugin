@@ -48,7 +48,7 @@ namespace az
       utility::string_t wrapKey(const utility::string_t& data,
                                 const utility::string_t& kid,
                                 bool cvtToBase64 = true,
-                                const utility::string_t& alg = U("RSA-OAEP-256")) const;
+                                const utility::string_t& alg = U("RSA-OAEP-256"));
 
       /**
        * @brief      decrypt a key
@@ -61,7 +61,7 @@ namespace az
        */
       utility::string_t unwrapKey(const utility::string_t& data,
                                   const utility::string_t& kid,
-                                  const utility::string_t& alg = U("RSA-OAEP-256")) const;
+                                  const utility::string_t& alg = U("RSA-OAEP-256"));
 
       /**
        * @brief      encrypt data
@@ -76,7 +76,7 @@ namespace az
       utility::string_t encrypt(const utility::string_t& data,
                                 const utility::string_t& kid,
                                 bool cvtToBase64 = true,
-                                const utility::string_t& alg = U("RSA-OAEP-256")) const;
+                                const utility::string_t& alg = U("RSA-OAEP-256"));
 
 
       /**
@@ -90,7 +90,7 @@ namespace az
        */
       utility::string_t decrypt(const utility::string_t& data,
                                 const utility::string_t& kid,
-                                const utility::string_t& alg = U("RSA-OAEP-256")) const;
+                                const utility::string_t& alg = U("RSA-OAEP-256"));
 
 
       /**
@@ -116,7 +116,7 @@ namespace az
        *
        * @return     vector containing keys
        */
-      std::vector<AzureKeyVaultEncryptionKey> keys() const;
+      std::vector<AzureKeyVaultEncryptionKey> getKeys();
 
       /**
        * @brief      Gets the key.
@@ -126,8 +126,8 @@ namespace az
        *
        * @return     The key.
        */
-      AzureKeyVaultEncryptionKey getKey(const utility::string_t& kid) const;
-      
+      AzureKeyVaultEncryptionKey getKey(const utility::string_t& kid);
+
       /**
        * @brief      Gets the key by name.
        *
@@ -136,7 +136,7 @@ namespace az
        *
        * @return     The key by name.
        */
-      AzureKeyVaultEncryptionKey getKeyByName(const utility::string_t& keyName, const utility::string_t& keyVersion = U("")) const;
+      AzureKeyVaultEncryptionKey getKeyByName(const utility::string_t& keyName, const utility::string_t& keyVersion = U(""));
 
       /**
        * @brief      Determines if authenticated.
@@ -223,13 +223,44 @@ namespace az
 
 
       /**
-       * @brief      handling of different return codes. 
+       * @brief      handling of different return codes.
        *             Will throw execptions if return code is other than 200
        *
        * @param[in]  response  The response
        */
       static void handleHttpResponse(web::http::http_response response);
 
+      /**
+       * @brief      exectues the request but checks wether an authorization is needed first.
+       *             if an authorization is needed, the function will use AzureKeyVaultClient::authenticate()
+       *             to try to retrieve a valid token. If that fails it will throw an exeption
+       *
+       * @param[in]  url      The url the request will be posted to
+       * @param[in]  request  The request
+       *
+       * @return     object containing the response
+       */
+      web::http::http_response handleRequest(const utility::string_t& url, web::http::http_request request);
+
+
+      /**
+       * @brief      executes a given operation on the given key.
+       *
+       * @param[in]  op           The operation
+       * @param[in]  method       The method
+       * @param[in]  body         The body
+       * @param[in]  kid          The kid
+       * @param[in]  accessToken  The access token
+       * @param[in]  apiVersion   The api version
+       *
+       * @return     http response object
+       */
+      web::http::http_response executeKeyOperation(const utility::string_t& op,
+          const web::http::method method,
+          const web::json::value& body,
+          const utility::string_t& kid,
+          const JwtToken& accessToken,
+          const utility::string_t& apiVersion);
 
       utility::string_t m_baseUrl;
       utility::string_t m_clientId;

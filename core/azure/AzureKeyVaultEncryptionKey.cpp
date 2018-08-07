@@ -4,7 +4,7 @@
 using namespace az;
 using namespace crypto;
 
-AzureKeyVaultEncryptionKey::AzureKeyVaultEncryptionKey(const az::AzureKeyVaultClient* client,
+AzureKeyVaultEncryptionKey::AzureKeyVaultEncryptionKey(az::AzureKeyVaultClient* client,
     const utility::string_t& kid,
     const web::json::value& attributes)
   : m_kid(kid),

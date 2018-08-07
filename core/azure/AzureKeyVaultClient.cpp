@@ -151,7 +151,7 @@ bool AzureKeyVaultClient::authenticate()
 
     // response from IDP is a JWT Token that contains the token type and access token we need for
     // Azure HTTP REST API calls
-    web::http::http_response response = client.request(request).get();
+    web::http::http_response response = this->handleRequest(url, request);
 
     auto status_code = response.status_code();
     if ( status_code == 200 )
@@ -230,7 +230,7 @@ utility::string_t AzureKeyVaultClient::createGuid()
     return boost::uuids::to_string(generator());
 }
 
-pplx::task<web::http::http_response> key_operation(const utility::string_t& op,
+web::http::http_response AzureKeyVaultClient::executeKeyOperation(const utility::string_t& op,
     const web::http::method method,
     const web::json::value& body,
     const utility::string_t& kid,
@@ -239,8 +239,6 @@ pplx::task<web::http::http_response> key_operation(const utility::string_t& op,
 {
   // create the url path to query the keyvault secret
   utility::string_t url = kid + _XPLATSTR("/") + op + _XPLATSTR("?api-version=") + apiVersion;
-
-  web::http::client::http_client client( url );
   web::http::http_request request( method );
   request.headers().add(_XPLATSTR("Content-Type"), _XPLATSTR("application/json"));
   // add access token we got from authentication step
@@ -249,13 +247,13 @@ pplx::task<web::http::http_response> key_operation(const utility::string_t& op,
   request.set_body(body);
 
   // Azure HTTP REST API call
-  return client.request(request);
+  return this->handleRequest(url, request);
 }
 
 utility::string_t AzureKeyVaultClient::wrapKey(const utility::string_t& data,
     const utility::string_t& kid,
     bool cvtToBase64,
-    const utility::string_t& alg) const
+    const utility::string_t& alg)
 {
   web::json::value request_body;
   request_body[U("alg")] = web::json::value::string(alg);
@@ -269,11 +267,11 @@ utility::string_t AzureKeyVaultClient::wrapKey(const utility::string_t& data,
     request_body[U("value")] = web::json::value::string(data);
   }
 
-  web::http::http_response response = key_operation("wrapkey",
+  web::http::http_response response = this->executeKeyOperation("wrapkey",
                                       web::http::methods::POST,
                                       request_body, kid,
                                       this->getAccessToken(),
-                                      this->getApiVersion() ).get();
+                                      this->getApiVersion() );
 
   handleHttpResponse(response);
 
@@ -293,7 +291,7 @@ utility::string_t AzureKeyVaultClient::wrapKey(const utility::string_t& data,
 
 utility::string_t AzureKeyVaultClient::unwrapKey(const utility::string_t& data,
     const utility::string_t& kid,
-    const utility::string_t& alg) const
+    const utility::string_t& alg)
 
 {
   web::json::value request_body;
@@ -301,11 +299,11 @@ utility::string_t AzureKeyVaultClient::unwrapKey(const utility::string_t& data,
   std::vector<uint8_t> vecData(data.begin(), data.end());
   request_body[U("value")] = web::json::value::string(data);
 
-  web::http::http_response response = key_operation("unwrapkey",
+  web::http::http_response response = this->executeKeyOperation("unwrapkey",
                                       web::http::methods::POST,
                                       request_body, kid,
                                       this->getAccessToken(),
-                                      this->getApiVersion() ).get();
+                                      this->getApiVersion() );
 
   handleHttpResponse(response);
 
@@ -327,7 +325,7 @@ utility::string_t AzureKeyVaultClient::unwrapKey(const utility::string_t& data,
 utility::string_t AzureKeyVaultClient::encrypt(const utility::string_t& data,
     const utility::string_t& kid,
     bool cvtToBase64,
-    const utility::string_t& alg) const
+    const utility::string_t& alg)
 {
   web::json::value request_body;
   request_body[U("alg")] = web::json::value::string(alg);
@@ -341,11 +339,11 @@ utility::string_t AzureKeyVaultClient::encrypt(const utility::string_t& data,
     request_body[U("value")] = web::json::value::string(data);
   }
 
-  web::http::http_response response = key_operation("encrypt",
+  web::http::http_response response = this->executeKeyOperation("encrypt",
                                       web::http::methods::POST,
                                       request_body, kid,
                                       this->getAccessToken(),
-                                      this->getApiVersion() ).get();
+                                      this->getApiVersion() );
 
   handleHttpResponse(response);
 
@@ -365,7 +363,7 @@ utility::string_t AzureKeyVaultClient::encrypt(const utility::string_t& data,
 
 utility::string_t AzureKeyVaultClient::decrypt(const utility::string_t& data,
     const utility::string_t& kid,
-    const utility::string_t& alg) const
+    const utility::string_t& alg)
 
 {
   web::json::value request_body;
@@ -374,11 +372,11 @@ utility::string_t AzureKeyVaultClient::decrypt(const utility::string_t& data,
   request_body[U("value")] = web::json::value::string(data);
 
 
-  web::http::http_response response = key_operation("decrypt",
+  web::http::http_response response = this->executeKeyOperation("decrypt",
                                       web::http::methods::POST,
                                       request_body, kid,
                                       this->getAccessToken(),
-                                      this->getApiVersion() ).get();
+                                      this->getApiVersion() );
 
   handleHttpResponse(response);
 
@@ -397,7 +395,7 @@ utility::string_t AzureKeyVaultClient::decrypt(const utility::string_t& data,
   return base64_decode(json_response[U("value")].as_string());
 }
 
-std::vector<AzureKeyVaultEncryptionKey> AzureKeyVaultClient::keys() const
+std::vector<AzureKeyVaultEncryptionKey> AzureKeyVaultClient::getKeys()
 {
 
     utility::string_t url = this->getBaseUrl() + _XPLATSTR("/keys") +
@@ -410,7 +408,7 @@ std::vector<AzureKeyVaultEncryptionKey> AzureKeyVaultClient::keys() const
     request.headers().add(_XPLATSTR("Authorization"), this->getAccessToken().type() + _XPLATSTR(" ") + this->getAccessToken().value() );
 
     // Azure HTTP REST API call
-    web::http::http_response response = client.request(request).get();
+    web::http::http_response response = this->handleRequest(url, request);
     std::vector<AzureKeyVaultEncryptionKey> keys;
     handleHttpResponse(response);
     
@@ -429,7 +427,7 @@ std::vector<AzureKeyVaultEncryptionKey> AzureKeyVaultClient::keys() const
     return keys;
 }
 
-AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& kid) const
+AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& kid)
 {
     AzureKeyVaultEncryptionKey key;
 
@@ -442,7 +440,7 @@ AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& 
     request.headers().add(_XPLATSTR("Authorization"), this->getAccessToken().type() + _XPLATSTR(" ") + this->getAccessToken().value() );
 
     // Azure HTTP REST API call
-    web::http::http_response response = client.request(request).get();
+    web::http::http_response response = this->handleRequest(url, request);
 
     // will throw exception if something goes wrong
     handleHttpResponse(response);
@@ -457,7 +455,7 @@ AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& 
     return key;
 }
 
- AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKeyByName(const utility::string_t& keyName, const utility::string_t& keyVersion) const
+ AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKeyByName(const utility::string_t& keyName, const utility::string_t& keyVersion)
  {
     utility::string_t kid = this->getBaseUrl() +
                             _XPLATSTR("/keys/") + keyName;
@@ -469,10 +467,31 @@ AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& 
     return this->getKey(kid);
  }
 
+pplx::task<web::http::http_response> postRequest(const utility::string_t& url, web::http::http_request request) 
+{
+    web::http::client::http_client client( url );
+    return client.request(request);  
+}
+
+web::http::http_response AzureKeyVaultClient::handleRequest(const utility::string_t& url, web::http::http_request request)
+{
+  auto response = postRequest(url, request).get();
+
+  if(401 == response.status_code()){
+    // if unauthorized, try to authenticate again
+    if (! this->authenticate() ){
+      throw AzureKeyVaultUnauthorizedException(response.extract_string().get(), response);
+    }
+    request.headers().remove("Authorization");
+    request.headers().add(_XPLATSTR("Authorization"), this->getAccessToken().type() + _XPLATSTR(" ") + this->getAccessToken().value() );
+    response = postRequest(url, request).get();
+  }
+
+  return response;
+}
 
 void AzureKeyVaultClient::handleHttpResponse(web::http::http_response response)
 {
-
   switch (response.status_code())
   {
       case 200: // ok

@@ -25,7 +25,7 @@ namespace az
        * @param[in]  kid         The kid
        * @param[in]  attributes  The attributes
        */
-      AzureKeyVaultEncryptionKey(const az::AzureKeyVaultClient* client = nullptr,
+      AzureKeyVaultEncryptionKey(az::AzureKeyVaultClient* client = nullptr,
                                  const utility::string_t& kid = "",
                                  const web::json::value& attributes = web::json::value());
 
@@ -98,7 +98,7 @@ namespace az
       utility::string_t m_kid;
       web::json::value m_attributes;
 
-      const az::AzureKeyVaultClient* m_keyVaultClient;
+      az::AzureKeyVaultClient* m_keyVaultClient;
   };
 
 } // crypto
