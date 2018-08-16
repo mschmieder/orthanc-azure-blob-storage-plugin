@@ -1,0 +1,35 @@
+FROM ubuntu:16.04
+
+RUN apt-get update -qq && apt-get install -y \
+       cmake \
+       gcc \
+       g++ \
+       libpq-dev \
+       postgresql-server-dev-all \
+       mercurial \
+       patch \
+       unzip \
+       libgtest-dev \
+       libjsoncpp-dev \
+       libssl-dev \
+       libxml2-dev \
+       uuid-dev \
+       libboost-all-dev \
+       zlib1g-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN hg clone https://bitbucket.org/sjodogne/orthanc-databases/ \
+    && cd orthanc-databases \
+    && hg update OrthancPostgreSQL-2.2
+
+RUN cd orthanc-databases/PostgreSQL/ \
+    && mkdir build \
+    && cd build \
+    && cmake ../ -DCMAKE_BUILD_TYPE=Release \
+                 -DALLOW_DOWNLOADS=ON \
+                 -DUSE_SYSTEM_GOOGLE_TEST=OFF \
+                 -DUSE_SYSTEM_ORTHANC_SDK=OFF \
+                 -DCMAKE_INSTALL_PREFIX=/install \
+    && make \
+    && make install

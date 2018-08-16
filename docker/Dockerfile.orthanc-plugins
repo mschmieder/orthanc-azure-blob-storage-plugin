@@ -8,7 +8,7 @@ RUN apt-get update -qq && apt-get install -y \
        libcpprest2.8 \
        libjsoncpp1 \
        libcrypto++9v5 \
-       libssl1.0.0 \    
+       libssl1.0.0 \
        libxml2 \
        libuuid1 \
        libboost-all-dev \

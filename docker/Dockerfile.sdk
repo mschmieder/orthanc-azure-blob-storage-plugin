@@ -12,7 +12,7 @@ RUN apt-get update -qq && apt-get install -y \
       libgtest-dev \
       libjsoncpp-dev \
       libcrypto++-dev \
-      libssl-dev \    
+      libssl-dev \
       libxml2-dev \
       uuid-dev \
       libboost-all-dev \
