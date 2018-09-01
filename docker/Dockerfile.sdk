@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG ORTHANC_VERSION=1.4.1
 ENV ORTHANC_VERSION=${ORTHANC_VERSION}
@@ -38,7 +38,7 @@ ENV CMAKE_BINARY=/opt/cmake/bin/cmake
 ENV PATH=/opt/cmake/bin:${PATH}
 
 ENV CPPRESTSDK_ROOT=/cpprestsdk-dev
-RUN git clone https://github.com/Microsoft/cpprestsdk.git -b v2.10.1
+RUN git clone https://github.com/Microsoft/cpprestsdk.git -b v2.10.5
 
 RUN cd /cpprestsdk/Release \
     && export CFLAGS=-fPIC \
@@ -51,18 +51,18 @@ RUN cd /cpprestsdk/Release \
       -DBUILD_TESTS=OFF \
       -DBUILD_SAMPLES=OFF \
       -DCMAKE_INSTALL_PREFIX=${CPPRESTSDK_ROOT} \
-    && make -j4 \
+    && make -j2 \
     && make install
 
 
 ENV AZURESTORAGE_ROOT=/azure-storage-cpp-dev
 
-COPY ./3rdparty/azure-storage-cpp/cpprestsdk-2.10-compatibility.patch ./
+#COPY ./3rdparty/azure-storage-cpp/cpprestsdk-2.10-compatibility.patch ./
 
-RUN git clone https://github.com/Azure/azure-storage-cpp.git -b v5.0.0 \
-    && cd azure-storage-cpp \
-    && git apply /cpprestsdk-2.10-compatibility.patch \
-    && rm /cpprestsdk-2.10-compatibility.patch
+RUN git clone https://github.com/Azure/azure-storage-cpp.git -b v5.1.0
+    #&& cd azure-storage-cpp \
+    #&& git apply /cpprestsdk-2.10-compatibility.patch \
+    #&& rm /cpprestsdk-2.10-compatibility.patch
 
 RUN cd /azure-storage-cpp/Microsoft.WindowsAzure.Storage \
     && export CFLAGS="-fPIC -Wno-deprecated-declarations" \
@@ -76,7 +76,7 @@ RUN cd /azure-storage-cpp/Microsoft.WindowsAzure.Storage \
       -DBUILD_SAMPLES=OFF \
       -DCMAKE_PREFIX_PATH=${CPPRESTSDK_ROOT} \
       -DCMAKE_INSTALL_PREFIX=${AZURESTORAGE_ROOT} \
-    && make -j4 \
+    && make -j2 \
     && make install
 
 RUN rm -rf /azure-storage-cpp\

@@ -1,6 +1,37 @@
 ARG ORTHANC_VERSION=1.4.1
 
-FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04 as sdk
+FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04 as sdk
+
+RUN apt-get update -qq && apt-get install -y \
+       libpq-dev \
+       postgresql-server-dev-all \
+       mercurial \
+       patch \
+       unzip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN hg clone https://bitbucket.org/sjodogne/orthanc-databases/ \
+    && cd orthanc-databases \
+    && hg update OrthancPostgreSQL-2.2
+
+RUN cd orthanc-databases/PostgreSQL/ \
+    && mkdir build \
+    && cd build \
+    && cmake ../ -DCMAKE_BUILD_TYPE=Release \
+                 -DALLOW_DOWNLOADS=ON \
+                 -DUSE_SYSTEM_GOOGLE_TEST=OFF \
+                 -DUSE_SYSTEM_ORTHANC_SDK=OFF \
+                 -DCMAKE_INSTALL_PREFIX=/install \
+    && make \
+    && make install
+
+# BUILD AZURE BLOB PLUGIN
+COPY . /src
+RUN cd /src/ \
+    && bash build.sh release
+
+# CREATE RUNTIME CONTAINER
 FROM mschmieder/orthanc:${ORTHANC_VERSION}
 
 RUN apt-get update -qq && apt-get install -y \
@@ -14,11 +45,15 @@ RUN apt-get update -qq && apt-get install -y \
        libboost-all-dev \
        zlib1g \
        liblzma5 \
+       postgresql \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./install/plugin/libOrthancAzureBlobStorage.so.*.*.* /usr/share/orthanc/plugins
 COPY --from=sdk /azure-storage-cpp-dev/lib/*azurestorage.so* /usr/lib/
+COPY --from=sdk /src/install/plugin/libOrthancAzureBlobStorage.so.*.*.* /usr/share/orthanc/plugins
+COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLIndex.so.2.2 /usr/share/orthanc/plugins
+COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLStorage.so.2.2 /usr/share/orthanc/plugins
+
 
 VOLUME [ "/var/lib/orthanc/db" ]
 EXPOSE 4242

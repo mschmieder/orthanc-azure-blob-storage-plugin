@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+CONFIG=$1
 SOURCE_DIR=$(pwd)
 
 if [ -z "${ORTHANC_ROOT}" ];then
@@ -67,24 +68,26 @@ echo "|  OSX_CMAKE_OPTIONS:.........${OSX_CMAKE_OPTIONS}"
 echo "|  VCPKG_CMAKE_OPTIONS:.......${VCPKG_CMAKE_OPTIONS}"
 echo "|------------------------------------------------------------------------------------------------------------------------------"
 
-cd ${BUILD_DIR}/debug
-${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
-      -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
-      -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
-      -DCMAKE_BUILD_TYPE=Debug \
-      ${OSX_CMAKE_OPTIONS} \
-      ${VCPKG_CMAKE_OPTIONS} \
-      ${CMAKE_ADDITIONAL_OPTIONS}
+if [ "${CONFIG}" == "debug" ]; then
+  cd ${BUILD_DIR}/debug
+  ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
+        -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
+        -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
+        -DCMAKE_BUILD_TYPE=Debug \
+        ${OSX_CMAKE_OPTIONS} \
+        ${VCPKG_CMAKE_OPTIONS} \
+        ${CMAKE_ADDITIONAL_OPTIONS}
 
-${CMAKE_BINARY} --build . --config Debug --target install -- -j2
+  ${CMAKE_BINARY} --build . --config Debug --target install
+else
+  cd ${BUILD_DIR}/release
+  ${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
+        -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
+        -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
+        -DCMAKE_BUILD_TYPE=Release \
+        ${CMAKE_ADDITIONAL_OPTIONS} \
+        ${OSX_CMAKE_OPTIONS} \
+        ${VCPKG_CMAKE_OPTIONS} \
 
-cd ${BUILD_DIR}/release
-${CMAKE_BINARY} ${SOURCE_DIR} -G"Unix Makefiles" \
-      -DORTHANC_ROOT:PATH="${ORTHANC_ROOT}" \
-      -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_DIR} \
-      -DCMAKE_BUILD_TYPE=Release \
-      ${CMAKE_ADDITIONAL_OPTIONS} \
-      ${OSX_CMAKE_OPTIONS} \
-      ${VCPKG_CMAKE_OPTIONS} \
-      
-${CMAKE_BINARY} --build . --config Release --target install -- -j2
+  ${CMAKE_BINARY} --build . --config Release --target install
+fi

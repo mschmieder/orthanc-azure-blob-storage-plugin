@@ -1,3 +1,5 @@
 vcpkg/
 Orthanc-*
 build/
+install/
+.plugin.config.json

@@ -1,16 +1,16 @@
 version: '3'
 
 services:
-  sdk-build:
-    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04
+  sdk:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
     build:
       context: .
       dockerfile: docker/Dockerfile.sdk
       args:
         ORTHANC_VERSION: 1.4.1
 
-  plugin-build:
-    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04
+  plugin:
+    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
     volumes:
       - .:/src
     environment:
@@ -29,7 +29,7 @@ services:
     ports:
       - "8042:8042"
       - "4242:4242"
-  
+
   orthanc-plugins:
     image: mschmieder/orthanc-plugins
     build:

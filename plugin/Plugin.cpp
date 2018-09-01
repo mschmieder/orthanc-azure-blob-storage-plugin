@@ -27,7 +27,7 @@ static RETURN_TYPE StorageCreate(const char* uuid,
     storage_->Create(uuid, content, static_cast<size_t>(size), type);
     return RETURN_SUCCESS;
   }
-  catch (std::runtime_error& e)
+  catch (std::exception& e)
   {
     OrthancPluginLogError(context_, e.what());
     return RETURN_FAILURE;
@@ -47,7 +47,7 @@ static RETURN_TYPE StorageRead(void** content,
     *size = static_cast<int64_t>(tmp);
     return RETURN_SUCCESS;
   }
-  catch (std::runtime_error& e)
+  catch (std::exception& e)
   {
     OrthancPluginLogError(context_, e.what());
     return RETURN_FAILURE;
@@ -63,7 +63,7 @@ static RETURN_TYPE StorageRemove(const char* uuid,
     storage_->Remove(uuid, type);
     return RETURN_SUCCESS;
   }
-  catch (std::runtime_error& e)
+  catch (std::exception& e)
   {
     OrthancPluginLogError(context_, e.what());
     return RETURN_FAILURE;
@@ -136,7 +136,7 @@ extern "C"
       /* Register the storage area into Orthanc */
       OrthancPluginRegisterStorageArea(context_, StorageCreate, StorageRead, StorageRemove);
     }
-    catch (std::runtime_error& e)
+    catch (std::exception& e)
     {
       OrthancPluginLogError(context_, e.what());
       return -1;

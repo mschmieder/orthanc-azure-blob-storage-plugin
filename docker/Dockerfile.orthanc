@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ARG ORTHANC_VERSION=1.4.1
 ENV ORTHANC_VERSION=${ORTHANC_VERSION}
@@ -13,7 +13,7 @@ RUN bash ./setup-locales.sh
 ADD docker/OrthancDocker/orthanc/download-orthanc.sh ./download-orthanc.sh
 
 # patch script to download specific orthanc version instead of 'mainline'
-RUN sed "s/mainline/${ORTHANC_VERSION}/" -i ./download-orthanc.sh 
+RUN sed "s/mainline/${ORTHANC_VERSION}/" -i ./download-orthanc.sh
 
 RUN bash ./download-orthanc.sh
 

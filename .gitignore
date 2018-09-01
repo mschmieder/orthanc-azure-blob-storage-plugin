@@ -1,4 +1,6 @@
 vcpkg/
 Orthanc-*
 build/
+docker/
 install/
+.plugin.config.json
