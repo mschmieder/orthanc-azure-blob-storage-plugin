@@ -1,6 +1,6 @@
 ARG ORTHANC_VERSION=1.4.1
 
-FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04 as sdk
+FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04 as sdk
 
 RUN apt-get update -qq && apt-get install -y \
        libpq-dev \
