@@ -10,6 +10,20 @@ RUN apt-get update && apt-get install -y \
         cmake \
         mercurial \
         uuid-dev \
+        libcurl4-openssl-dev \
+        liblua5.1-0-dev \
+        libgtest-dev \
+        libpng-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libjpeg-dev \
+        zlib1g-dev \
+        libdcmtk2-dev \
+        libboost-all-dev \
+        libwrap0-dev \
+        libcharls-dev \
+        libjsoncpp-dev \
+        libpugixml-dev \
     && apt-get clean
 
 RUN hg clone https://bitbucket.org/sjodogne/orthanc/ \
@@ -18,11 +32,10 @@ RUN hg clone https://bitbucket.org/sjodogne/orthanc/ \
 
 RUN mkdir orthanc-build \
     && cd /orthanc-build \
-    && cmake -DSTATIC_BUILD=ON \
-        # -DALLOW_DOWNLOADS=ON \
-        # -DUSE_GOOGLE_TEST_DEBIAN_PACKAGE=ON \
-        # -DUSE_SYSTEM_MONGOOSE=OFF \
-        # -DDCMTK_LIBRARIES=dcmjpls \
+    && cmake -DALLOW_DOWNLOADS=ON \
+        -DUSE_GOOGLE_TEST_DEBIAN_PACKAGE=ON \
+        -DUSE_SYSTEM_MONGOOSE=OFF \
+        -DDCMTK_LIBRARIES=dcmjpls \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/orthanc-install \
         ../orthanc \
@@ -34,7 +47,22 @@ RUN mkdir orthanc-build \
 FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y \
+        unzip \
         wget \
+        libuuid1 \
+        libcurl4 \
+        liblua5.1-0 \
+        libpng16-16 \
+        libsqlite3-0 \
+        libssl1.1 \
+        libjpeg9 \
+        zlib1g \
+        libdcmtk12 \
+        libboost-all-dev \
+        libwrap0 \
+        libcharls1 \
+        libjsoncpp1 \
+        libpugixml1v5 \
     && apt-get clean
 
 WORKDIR /root/
