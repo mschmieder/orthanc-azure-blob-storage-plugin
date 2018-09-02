@@ -50,9 +50,9 @@ RUN apt-get update -qq && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=sdk /azure-storage-cpp-dev/lib/*azurestorage.so* /usr/lib/
-COPY --from=sdk /src/install/plugin/libOrthancAzureBlobStorage.so.*.*.* /usr/share/orthanc/plugins
-COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLIndex.so.2.2 /usr/share/orthanc/plugins
-COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLStorage.so.2.2 /usr/share/orthanc/plugins
+COPY --from=sdk /src/install/plugin/libOrthancAzureBlobStorage.so* /usr/share/orthanc/plugins/
+COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLIndex.so* /usr/share/orthanc/plugins/
+COPY --from=sdk /install/share/orthanc/plugins/libOrthancPostgreSQLStorage.so* /usr/share/orthanc/plugins/
 
 
 VOLUME [ "/var/lib/orthanc/db" ]

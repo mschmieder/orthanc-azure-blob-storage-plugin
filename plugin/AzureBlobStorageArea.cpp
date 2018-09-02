@@ -1,6 +1,5 @@
 #include "AzureBlobStorageArea.h"
 #include "Configuration.h"
-
 #include <Crypto.h>
 
 #include <sstream>
@@ -26,12 +25,14 @@ void AzureBlobStorageArea::DeleteBlob(const std::string& uuid)
   // Retrieve reference to a blob
   azure::storage::cloud_block_blob blockBlob = pContainer->get_block_blob_reference(uuid);
 
-  if (!blockBlob.exists())
-  {
-    throw AzureBlobStorageException("Requested blob does not exist");
+  if (blockBlob.exists()) {
+      blockBlob.delete_blob();
   }
-
-  blockBlob.delete_blob();
+  else {
+    std::stringstream sstr;
+    sstr<<"Warning in AzureBlobStorageArea::DeleteBlob: Request blob '"<< uuid << "' does not exist. Skipping";
+    OrthancPluginLogWarning(m_connection->pluginContext(), sstr.str().c_str());
+  }
 }
 
 
@@ -114,7 +115,7 @@ std::string AzureBlobStorageArea::CreateBlobName(const std::string& uuid, Orthan
   return block_name_stream.str();
 }
 
-void  AzureBlobStorageArea::Create(const std::string& uuid,
+void AzureBlobStorageArea::Create(const std::string& uuid,
                                    const void* content,
                                    size_t size,
                                    OrthancPluginContentType type)
@@ -146,7 +147,7 @@ void  AzureBlobStorageArea::Create(const std::string& uuid,
   dataUploadTask.wait();
 }
 
-void  AzureBlobStorageArea::Read(void*& content,
+void AzureBlobStorageArea::Read(void*& content,
                                  size_t& size,
                                  const std::string& uuid,
                                  OrthancPluginContentType type)
@@ -154,6 +155,7 @@ void  AzureBlobStorageArea::Read(void*& content,
   // Retrieve reference to a blob
   std::string blobId = CreateBlobName(uuid, type);
   std::string metaId = blobId + ".info";
+  size = 0;
 
   if (m_connection->encryptionEnabled())
   {

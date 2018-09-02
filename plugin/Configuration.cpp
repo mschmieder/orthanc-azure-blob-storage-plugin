@@ -81,7 +81,7 @@ namespace OrthancPlugins
 
    AzureBlobStorageConnection* CreateConnection(OrthancPluginContext* context, const Json::Value& configuration)
    {
-     std::unique_ptr<AzureBlobStorageConnection> connection = std::make_unique<AzureBlobStorageConnection>();
+     std::unique_ptr<AzureBlobStorageConnection> connection = std::make_unique<AzureBlobStorageConnection>(context);
      if (configuration.isMember("AzureBlobStorage"))
      {
         Json::Value c = configuration["AzureBlobStorage"];

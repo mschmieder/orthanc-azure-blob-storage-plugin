@@ -18,7 +18,7 @@ namespace OrthancPlugins
    * @return     { description_of_the_return_value }
    */
   bool ORTHANCAZUREBLOBSTORAGE_EXPORT ReadConfiguration(Json::Value& configuration, OrthancPluginContext* context);
-  
+
 
   /**
    * @brief createConnection
@@ -39,7 +39,7 @@ namespace OrthancPlugins
    * @return     The string value.
    */
   std::string ORTHANCAZUREBLOBSTORAGE_EXPORT GetStringValue(const Json::Value& configuration, const std::string& key, const std::string& defaultValue);
-  
+
   /**
    * @brief      Gets the integer value.
    *
@@ -50,7 +50,7 @@ namespace OrthancPlugins
    * @return     The integer value.
    */
   int ORTHANCAZUREBLOBSTORAGE_EXPORT GetIntegerValue(const Json::Value& configuration, const std::string& key, int defaultValue);
-  
+
   /**
    * @brief      Gets the boolean value.
    *
@@ -61,7 +61,7 @@ namespace OrthancPlugins
    * @return     The boolean value.
    */
   bool ORTHANCAZUREBLOBSTORAGE_EXPORT GetBooleanValue(const Json::Value& configuration, const std::string& key, bool defaultValue);
-  
+
   /**
    * @brief      { function_description }
    *

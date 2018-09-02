@@ -10,7 +10,7 @@ class AzureBlobStorageTest : public ::testing::Test {
  protected:
     std::unique_ptr<OrthancPlugins::AzureBlobStorageArea> storage_;
 
-  virtual void SetUp() 
+  virtual void SetUp()
   {
     std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection> connection = std::make_unique<OrthancPlugins::AzureBlobStorageConnection>();
     connection->setConnectionString(storage_connection_string);
@@ -20,7 +20,7 @@ class AzureBlobStorageTest : public ::testing::Test {
     storage_ = std::make_unique<OrthancPlugins::AzureBlobStorageArea>(connection.release());
   }
 
-  virtual void TearDown() 
+  virtual void TearDown()
   {
   }
 
@@ -53,8 +53,8 @@ TEST_F(AzureBlobStorageTest, StoreFiles)
     ASSERT_ANY_THROW(storage_->Read(content, size, filename, type));
 }
 
- 
-int main(int argc, char **argv) 
+
+int main(int argc, char **argv)
 {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

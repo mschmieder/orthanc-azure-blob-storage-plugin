@@ -4,3 +4,4 @@ build/
 docker/
 install/
 .plugin.config.json
+.vscode/

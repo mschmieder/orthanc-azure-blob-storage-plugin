@@ -10,7 +10,7 @@
 namespace OrthancPlugins
 {
   class ORTHANCAZUREBLOBSTORAGE_EXPORT AzureBlobStorageArea
-  {  
+  {
     public:
       AzureBlobStorageArea(AzureBlobStorageConnection* connection);
       ~AzureBlobStorageArea();

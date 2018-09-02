@@ -7,9 +7,12 @@
 namespace OrthancPlugins
 {
 
-  AzureBlobStorageConnection::AzureBlobStorageConnection(const std::string& storage_connection_string,
+  AzureBlobStorageConnection::AzureBlobStorageConnection(
+      OrthancPluginContext* context,
+      const std::string& storage_connection_string,
       const std::string& container_name )
-    : m_storage_connection_string(storage_connection_string),
+    : m_pluginContext(context),
+      m_storage_connection_string(storage_connection_string),
       m_container_name(container_name)
   {
   }
@@ -30,6 +33,10 @@ namespace OrthancPlugins
 
   void AzureBlobStorageConnection::establishConnection()
   {
+    if(m_pluginContext) {
+      OrthancPluginLogInfo(m_pluginContext, "Establishing AzureBlobStroage connection.");
+    }
+
     // Retrieve storage account from connection string.
     m_storage_account = azure::storage::cloud_storage_account::parse(m_storage_connection_string);
 
@@ -54,6 +61,10 @@ namespace OrthancPlugins
 
   void AzureBlobStorageConnection::enableEncryption(bool enable)
   {
+    if(m_pluginContext) {
+      OrthancPluginLogInfo(m_pluginContext, "AzureBlobStroage encrpytion enabled.");
+    }
+
     m_encryptionEnabled = enable;
   }
 
