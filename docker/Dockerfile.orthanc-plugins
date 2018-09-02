@@ -1,6 +1,6 @@
 ARG ORTHANC_VERSION=1.4.1
 
-FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-16.04 as sdk
+FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04 as sdk
 
 RUN apt-get update -qq && apt-get install -y \
        libpq-dev \
@@ -32,13 +32,14 @@ RUN cd /src/ \
     && bash build.sh release
 
 # CREATE RUNTIME CONTAINER
-FROM mschmieder/orthanc:${ORTHANC_VERSION}
+FROM mschmieder/orthanc:${ORTHANC_VERSION}-ubuntu-18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && apt-get install -y \
        liblzma5 \
-       libcpprest2.8 \
        libjsoncpp1 \
-       libcrypto++9v5 \
+       libcrypto++6 \
        libssl1.0.0 \
        libxml2 \
        libuuid1 \

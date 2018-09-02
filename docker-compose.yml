@@ -9,23 +9,13 @@ services:
       args:
         ORTHANC_VERSION: 1.4.1
 
-  plugin:
-    image: mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04
-    volumes:
-      - .:/src
-    environment:
-      BUILD_DIR: /src/build
-      INSTALL_DIR: /src/install
-    working_dir: /src
-    command: /bin/bash -c "/bin/bash build.sh"
-
   orthanc:
-    image: mschmieder/orthanc
+    image: mschmieder/orthanc:1.4.1-ubuntu-18.04
     build:
       context: .
       dockerfile: docker/Dockerfile.orthanc
       args:
-        ORTHANC_VERIONS: 1.4.1
+        ORTHANC_VERION: 1.4.1
     ports:
       - "8042:8042"
       - "4242:4242"

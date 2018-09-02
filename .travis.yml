@@ -14,16 +14,17 @@ matrix:
         - sudo apt-get -y install docker-ce
       script:
         - mkdir -p ${TRAVIS_BUILD_DIR}/install
+        - docker-compose build orthanc
+        - docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
+        - docker-compose push orthanc
         - docker-compose build orthanc-plugins
         - docker tag mschmieder/orthanc-plugins:latest mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
         - |
           if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
             docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
           fi
         - |
           if [ -n "${TRAVIS_TAG}" ]; then
-            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
             docker push mschmieder/orthanc-plugins:${TRAVIS_BRANCH}
             docker push mschmieder/orthanc-plugins:latest
           fi

@@ -1,26 +1,76 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04 as BUILDER
+# LABEL Maintainer "Matthias Schmieder <schmieder.matthias@gmail.com>"
 
 ARG ORTHANC_VERSION=1.4.1
 ENV ORTHANC_VERSION=${ORTHANC_VERSION}
 
-LABEL Maintainer "Matthias Schmieder <schmieder.matthias@gmail.com>"
+RUN apt-get update && apt-get install -y \
+        build-essential \
+        unzip \
+        cmake \
+        mercurial \
+        uuid-dev \
+    && apt-get clean
+
+RUN hg clone https://bitbucket.org/sjodogne/orthanc/ \
+    && cd orthanc \
+    && hg update Orthanc-${ORTHANC_VERSION}
+
+RUN mkdir orthanc-build \
+    && cd /orthanc-build \
+    && cmake -DSTATIC_BUILD=ON \
+        # -DALLOW_DOWNLOADS=ON \
+        # -DUSE_GOOGLE_TEST_DEBIAN_PACKAGE=ON \
+        # -DUSE_SYSTEM_MONGOOSE=OFF \
+        # -DDCMTK_LIBRARIES=dcmjpls \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/orthanc-install \
+        ../orthanc \
+    && make -j2 \
+    && make install
+
+
+# SETUP RUNTIME CONTAINER
+FROM ubuntu:18.04
+
+RUN apt-get update && apt-get install -y \
+        wget \
+    && apt-get clean
 
 WORKDIR /root/
 
 ADD docker/OrthancDocker/orthanc/setup-locales.sh ./setup-locales.sh
 RUN bash ./setup-locales.sh
 
-ADD docker/OrthancDocker/orthanc/download-orthanc.sh ./download-orthanc.sh
+COPY --from=BUILDER /orthanc-install /orthanc-install
 
-# patch script to download specific orthanc version instead of 'mainline'
-RUN sed "s/mainline/${ORTHANC_VERSION}/" -i ./download-orthanc.sh
+# Move the binaries to their final location
+RUN mkdir -p /usr/local/sbin/ \
+    && mkdir -p /usr/local/bin/ \
+    && mkdir -p /usr/local/share/orthanc/plugins/ \
+    && cp /orthanc-install/sbin/* /usr/local/sbin/ \
+    && cp /orthanc-install/bin/*  /usr/local/bin/ \
+    && cp /orthanc-install//share/orthanc/plugins/* /usr/local/share/orthanc/plugins/ \
+    && rm -rf /orthanc-install
 
-RUN bash ./download-orthanc.sh
+ARG ORTHANC_VERSION=1.4.1
+ENV ORTHANC_VERSION=${ORTHANC_VERSION}
 
+# Execute the UnitTests associated with this version
+# and clean up afterwards
+RUN mkdir -p /tests \
+    && cd /tests \
+    && wget http://lsb.orthanc-server.com/orthanc/${ORTHANC_VERSION}/UnitTests -O - > UnitTests-Orthanc \
+    && chmod +x UnitTests-Orthanc \
+    && ./UnitTests-Orthanc \
+    && rm -rf /tests
+
+# Create a proper OrthancConfig by running orthanc
 ADD docker/OrthancDocker/orthanc/create-config.sh ./create-config.sh
 RUN bash ./create-config.sh
 
-RUN rm ./setup-locales.sh ./download-orthanc.sh ./create-config.sh
+# Clean up
+RUN rm ./setup-locales.sh ./create-config.sh
 
 VOLUME [ "/var/lib/orthanc/db" ]
 EXPOSE 4242

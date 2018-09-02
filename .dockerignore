@@ -4,5 +4,6 @@ build/
 install/
 .plugin.config.json
 docker-compose.yml
-Dockerfile*
+*Dockerfile*
 .vscode/
+.travis.yml
