@@ -57,7 +57,6 @@ RUN cd /cpprestsdk/Release \
 
 ENV AZURESTORAGE_ROOT=/azure-storage-cpp-dev
 
-#COPY ./3rdparty/azure-storage-cpp/cpprestsdk-2.10-compatibility.patch ./
 
 RUN git clone https://github.com/Azure/azure-storage-cpp.git -b v5.1.0
     #&& cd azure-storage-cpp \

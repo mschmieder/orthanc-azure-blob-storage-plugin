@@ -4,6 +4,7 @@ FROM mschmieder/orthanc-azure-blob-storage-plugin-sdk:ubuntu-18.04 as sdk
 
 RUN apt-get update -qq && apt-get install -y \
        libpq-dev \
+       libjsoncpp-dev \
        postgresql-server-dev-all \
        mercurial \
        patch \
