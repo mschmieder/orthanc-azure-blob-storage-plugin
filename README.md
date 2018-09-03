@@ -106,7 +106,9 @@ To build on a Unix/MacOS system use the provided scripts that are simply invokin
 You can use docker to build the plugin for Unix. Make sure you have the latest `docker-compose` installed.
 
 ```bash
-docker-compose run plugin-build
+docker-compose build orthanc
+docker-compose build sdk
+docker-compose build orthanc-plugins
 ```
 
 ### Run Orthanc with AzureBlobStoragePlugin
