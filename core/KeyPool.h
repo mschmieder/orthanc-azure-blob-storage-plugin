@@ -24,7 +24,7 @@ class KeyPool
     KeyPool& operator=(KeyPool const&) = delete;  // Copy assign
     KeyPool& operator=(KeyPool &&) = delete;      // Move assign
 
-    static KeyPool* getInstance();
+    static KeyPool& getInstance();
 
     std::pair<Key, Key> getEncryptionKey(const EncryptionKey *kek);
     Key getDecryptionKey(const AesEncryptionKey* encrypted_key, const EncryptionKey* kek);
@@ -37,10 +37,15 @@ class KeyPool
       m_keyPoolSize = size;
     }
 
-  protected:
+
+  private:
     KeyPool(size_t decayCount = 1, size_t keyPoolSize=10);
     ~KeyPool();
-  private:
+
+    static void create();
+    static void onDeadReference();
+    static void killPhoenix();
+
     void addDecryptionKey(const std::string& uuid, KeyPool::Key);
 
     class DecayingEncryptionKey
@@ -55,14 +60,14 @@ class KeyPool
             m_key->generate();
 
             // encrypt one time content encryption key (cek) with key encryption key (kek)
-            m_key = std::make_shared<AesEncryptionKey>(AesEncryptionKey(kek->wrap(m_key->data(), m_key->size()), m_key->iv()));
+            m_encryptedKey = std::make_shared<AesEncryptionKey>(AesEncryptionKey(kek->wrap(m_key->data(), m_key->size()), m_key->iv()));
         }
 
         bool isValid() const {
             return (m_decayCount > 0);
         }
 
-        KeyPair getKeys()
+        KeyPair useKeys()
         {
           m_decayCount = m_decayCount -1;
           return std::make_pair(m_key, m_encryptedKey);
@@ -72,15 +77,6 @@ class KeyPool
         {
           return m_key;
         }
-
-
-        // std::shared_ptr<AesEncryptionKey> getEncryptedKey() {
-        //   return m_encryptedKey;
-        // }
-
-        // std::shared_ptr<AesEncryptionKey> getKey() {
-        //   return m_key;
-        // }
 
         std::string getUuid() const {
           return m_key->hexData();
@@ -100,10 +96,12 @@ class KeyPool
     std::unordered_map<std::string, KeyPool::Key > m_decryptionKeyPool;
     std::list<std::string> m_activeDecryptionKeyIds;
 
-    std::shared_ptr<DecayingEncryptionKey> m_activeEncryptionKey;
+    std::shared_ptr<KeyPool::DecayingEncryptionKey> m_activeEncryptionKey;
 
-    static std::atomic<KeyPool*> m_instance;
-    static std::mutex m_singletonMutex;
+    // singelton data
+    static KeyPool* m_pInstance;
+    static bool m_bDestroyed;
+    static std::recursive_mutex m_singletonMutex;
 };
 } // namespace crypto
 

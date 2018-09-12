@@ -7,7 +7,9 @@ using namespace crypto;
 
 Cipher Encryption::encrypt(const EncryptionKey* kek, const uint8_t* data, size_t size)
 {
-  auto keyPair = KeyPool::getInstance()->getEncryptionKey(kek);
+  KeyPool& pool = KeyPool::getInstance();
+
+  auto keyPair = pool.getEncryptionKey(kek);
   KeyPool::Key cek = keyPair.first;
   KeyPool::Key encrypted_cek = keyPair.second;
 
@@ -28,7 +30,7 @@ std::vector<uint8_t> Decryption::decrypt(const EncryptionKey* kek,
   // retrieve the encrypted content encryption key
   AesEncryptionKey cek_encrypted = AesEncryptionKey::fromJson(meta.getCekMetaData());
 
-  KeyPool::Key cek = KeyPool::getInstance()->getDecryptionKey(&cek_encrypted, kek);
+  KeyPool::Key cek = KeyPool::getInstance().getDecryptionKey(&cek_encrypted, kek);
 
   // decrypt the encrypted data
   std::vector<uint8_t> decrypted_data = cek->unwrap(data, size);

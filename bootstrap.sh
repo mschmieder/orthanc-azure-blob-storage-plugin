@@ -38,7 +38,11 @@ if [ -n "${USE_VCPKG}" ]; then
 fi
 
 # DOWNLOAD ORTHANC SOURCES
-ORTHANC_VERSION=${ORTHANC_VERSION:=1.4.1}
+if [ "$(uname)" == "Darwin" ]; then
+  ORTHANC_VERSION=${ORTHANC_VERSION:=1.3.1}
+else
+  ORTHANC_VERSION=${ORTHANC_VERSION:=1.4.1}
+fi
 
 if [ ! -d "orthanc" ];then
   ORHTANC_FILENAME=Orthanc-${ORTHANC_VERSION}.tar.gz

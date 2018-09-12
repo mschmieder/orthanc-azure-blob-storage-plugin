@@ -170,8 +170,10 @@ void AzureBlobStorageArea::Read(void*& content,
     content = malloc(decryptedDataSize);
     size = decryptedDataSize;
 
-    utility::string_t kek_id = metaData.asJson().at(U("kek")).at(U("kid")).as_string();
-    az::AzureKeyVaultEncryptionKey kek = m_connection->getAzureKeyEncryptionKey(kek_id);
+    web::json::value metaJson = metaData.asJson();
+    web::json::value kek_id = metaJson["kek"]["key"]["kid"];
+
+    az::AzureKeyVaultEncryptionKey kek = m_connection->getAzureKeyEncryptionKey(kek_id.as_string());
     crypto::Decryption::decrypt(&kek,
                                 metaData,
                                 encryptedBlob.data(), encryptedBlob.size(),
