@@ -20,7 +20,7 @@ set(AZURE_BLOB_STORAGE_PLUGIN_VERSION "${AZURE_BLOB_STORAGE_PLUGIN_VERSION_MAJOR
 # Add custom cmake modules to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" "${CMAKE_MODULE_PATH}" )
 
-if(UNIX)
+if(UNIX AND NOT APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
@@ -76,6 +76,8 @@ set(SOURCES_CORE  core/Crypto.h
                   core/azure/AzureKeyVaultClient.cpp
                   core/azure/AzureKeyVaultEncryptionKey.h
                   core/azure/AzureKeyVaultEncryptionKey.cpp
+                  core/KeyPool.h
+                  core/KeyPool.cpp
                   core/EncryptionKey.h
                   core/AesEncryptionKey.h
                   core/AesEncryptionKey.cpp)

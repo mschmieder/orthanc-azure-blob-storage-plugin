@@ -3,7 +3,7 @@
 
 #include "EncryptionKey.h"
 #include <string>
-
+#include <cpprest/json.h>
 namespace crypto 
 {
   /**
@@ -95,7 +95,9 @@ namespace crypto
        *
        * @return     { description_of_the_return_value }
        */
-      std::string asJson() const;
+      std::string asJsonString() const;
+
+      web::json::value asJson() const;
 
     private:
       /**

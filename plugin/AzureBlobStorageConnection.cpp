@@ -59,6 +59,19 @@ namespace OrthancPlugins
     }
   }
 
+  az::AzureKeyVaultEncryptionKey AzureBlobStorageConnection::getAzureKeyEncryptionKey(const std::string& keyId)
+  {
+    az::AzureKeyVaultEncryptionKey key;
+    if( m_keyVaultKeyId == keyId) {
+      key = m_kek;
+    }
+    else
+    {
+      key = m_kvc->getKey(keyId);
+    }
+    return key;
+  }
+
   void AzureBlobStorageConnection::enableEncryption(bool enable)
   {
     if(m_pluginContext) {

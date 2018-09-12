@@ -32,6 +32,8 @@ namespace crypto
 
       const uint8_t* data() const;
 
+      std::string hexData() const;
+
       size_t size() const;
 
       const CryptoPP::SecByteBlock& key() const;

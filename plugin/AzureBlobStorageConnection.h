@@ -117,6 +117,8 @@ namespace OrthancPlugins
        */
       const crypto::EncryptionKey* getKeyEncryptionKey() const {return &m_kek;}
 
+      az::AzureKeyVaultEncryptionKey getAzureKeyEncryptionKey(const std::string& keyId);
+
       /**
        * @brief
        *

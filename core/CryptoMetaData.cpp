@@ -30,22 +30,6 @@ CryptoMetaData CryptoMetaData::create(const EncryptionKey* kek,
                         decryptedDataSize);
 }
 
-
-// void CryptoMetaData::serialize(std::ostream& stream) const
-// {
-//   stream << this->asJson();
-// }
-
-// CryptoMetaData CryptoMetaData::deserialize(std::istream& stream)
-// {
-//   web::json::value meta = web::json::value::parse(stream);
-//   std::stringstream sstr;
-//   meta.serialize(sstr);
-
-//   return CryptoMetaData::fromJson(sstr.str());
-// }
-
-
 uint64_t CryptoMetaData::getDecryptedDataSize() const
 {
   return m_decryptedDataSize;
@@ -56,7 +40,17 @@ uint64_t CryptoMetaData::getEncryptedDataSize() const
   return m_encryptedDataSize;
 }
 
-std::string CryptoMetaData::asJson() const
+std::string CryptoMetaData::asJsonString() const
+{
+  web::json::value meta = this->asJson();
+
+  std::stringstream sstr;
+  meta.serialize(sstr);
+
+  return sstr.str();
+}
+
+web::json::value CryptoMetaData::asJson() const
 {
   web::json::value meta;
 
@@ -68,10 +62,7 @@ std::string CryptoMetaData::asJson() const
   meta[U("cek")] = web::json::value::parse(m_metaCek);
   meta[U("cipher")] = cipher;
 
-  std::stringstream sstr;
-  meta.serialize(sstr);
-
-  return sstr.str();
+  return meta;
 }
 
 CryptoMetaData CryptoMetaData::fromJson(const std::string& meta_json)

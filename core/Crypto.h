@@ -4,6 +4,7 @@
 #include "EncryptionKey.h"
 #include "Cipher.h"
 #include "CryptoMetaData.h"
+#include "KeyPool.h"
 
 #include <sstream>
 #include <vector>
@@ -26,7 +27,6 @@ namespace crypto
        * @return     cipher holding encrypted data
        */
       static Cipher encrypt(const EncryptionKey* kek, const uint8_t* data, size_t size);
-
   };
 
   class Decryption

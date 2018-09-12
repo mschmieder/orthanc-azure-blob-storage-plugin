@@ -8,7 +8,7 @@ if [ -n "${USE_VCPKG}" ]; then
   if [ ! -d "vcpkg" ];then
     git clone https://github.com/mschmieder/vcpkg.git
     cd vcpkg
-    
+
     git checkout fix-boost-compile-flags
 
     ./bootstrap-vcpkg.sh

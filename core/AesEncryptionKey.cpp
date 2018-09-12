@@ -108,15 +108,19 @@ const SecByteBlock& AesEncryptionKey::key() const
   return m_key;
 }
 
+std::string AesEncryptionKey::hexData() const
+{
+  std::string keyHex;
+  StringSource ss(m_key.data(), m_key.size(), true, new HexEncoder(new StringSink(keyHex)));
+
+  return keyHex;
+}
+
 std::string AesEncryptionKey::metaData() const
 {
     web::json::value meta;
-
-    std::string keyHex;
-    StringSource ss(m_key.data(), m_key.size(), true, new HexEncoder(new StringSink(keyHex)));
-
     web::json::value key;
-    key[U("value")] = web::json::value::string(keyHex);
+    key[U("value")] = web::json::value::string(this->hexData());
 
     std::vector<web::json::value> jsonIv;
     for(auto it = m_iv.cbegin(); it != m_iv.cend(); ++it){
