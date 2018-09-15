@@ -7,6 +7,8 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include <KeyPool.h>
+
 namespace OrthancPlugins
 {
 
@@ -96,6 +98,14 @@ namespace OrthancPlugins
         if (c.isMember("EncryptionEnabled"))
         {
           connection->enableEncryption(c["EncryptionEnabled"].asBool());
+        }
+        if (c.isMember("KeyDecayCount"))
+        {
+          crypto::KeyPool::getInstance().setKeyDecayCount(c["KeyDecayCount"].asInt());
+        }
+        if (c.isMember("KeyPoolSize"))
+        {
+          crypto::KeyPool::getInstance().setDecryptionKeyPoolSize(c["KeyPoolSize"].asInt());
         }
         if (c.isMember("AzureKeyVault"))
         {

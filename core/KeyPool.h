@@ -29,7 +29,7 @@ class KeyPool
     std::pair<Key, Key> getEncryptionKey(const EncryptionKey *kek);
     Key getDecryptionKey(const AesEncryptionKey* encrypted_key, const EncryptionKey* kek);
 
-    void setDecayCount(size_t count) {
+    void setKeyDecayCount(size_t count) {
       m_decayCount = count;
     }
 

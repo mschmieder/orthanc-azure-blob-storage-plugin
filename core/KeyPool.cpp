@@ -81,6 +81,8 @@ std::pair<KeyPool::Key, KeyPool::Key> KeyPool::getEncryptionKey(const Encryption
 
 void KeyPool::addDecryptionKey(const std::string &uuid, KeyPool::Key decryptionKey)
 {
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
     // insert the decryption key into the key pool
     m_decryptionKeyPool.insert(std::make_pair(uuid, decryptionKey));
 

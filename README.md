@@ -79,6 +79,8 @@ In order to use the client-side encryption mechanism, add the following options 
 ```json
 "AzureBlobStorage" : {
   "EncryptionEnabled" : true,
+  "KeyDecayCount": 10000,
+  "KeyPoolSize": 10,
   "AzureKeyVault": {
     "baseUrl" : "https://xxx-yyyy.vault.azure.net/",
     "clientId" : "1a816e71-9ae0-4666-a6d1-cac05c5de767",
@@ -89,9 +91,10 @@ In order to use the client-side encryption mechanism, add the following options 
 ```
 Make sure your client has the rights to execute **wrap** and **unwrap** functions on your AzureKeyVault instance, otherwise the encryption of the data will fail.
 
+Encryption and communication with AzureKeyVault creates some overhead, since every CEK needs to be encrypted using AzureKeyVault. In the worst-case this means that every single images gets it's own CEK which makes the highest security possible. In order to speed up the encryption and processing time, you can set the **KeyDecayCount**. This value will define how often a CEK is allowed to be re-used before it will be renewed. Only on renewal a communication with KeyVault needs to happen, which speeds up the process quite a bit. Additionally this plugin implements a **KeyPool** approach that keeps a number of _hot_ keys for decryption to prevent constant communication with AzureKeyVault for decrypting the CEK. Setting the **KeyPoolSize** to `0` will make the highest security setting, since no key will be kept.
 
 ## Building
-The plugin can be build on all major platforms. 
+The plugin can be build on all major platforms.
 
 ### Unix/MacOS
 To build on a Unix/MacOS system use the provided scripts that are simply invoking cmake with the correct parameters
