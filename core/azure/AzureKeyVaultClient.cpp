@@ -444,12 +444,17 @@ AzureKeyVaultEncryptionKey AzureKeyVaultClient::getKey(const utility::string_t& 
 
     // will throw exception if something goes wrong
     handleHttpResponse(response);
-    
+
     if(response.status_code() == 200){
         web::json::value attributes = response.extract_json().get();
+
+        // convert JSON format
+        std::stringstream sstr;
+        attributes.serialize(sstr);
+
         key = AzureKeyVaultEncryptionKey(this,
                                          attributes[U("key")][U("kid")].as_string(),
-                                         attributes);
+                                         sstr.str());
     }
 
     return key;

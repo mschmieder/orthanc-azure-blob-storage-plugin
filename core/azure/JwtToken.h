@@ -1,9 +1,9 @@
 #ifndef JWT_TOKEN_H
 #define JWT_TOKEN_H
 
-#include <cpprest/details/basic_types.h>
+#include <string>
 
-namespace az 
+namespace az
 {
   class JwtToken
   {
@@ -14,7 +14,7 @@ namespace az
        * @param[in]  tokenType  The token type
        * @param[in]  token      The token
        */
-      JwtToken(const utility::string_t& tokenType = "", const utility::string_t& token = "");
+      JwtToken(const std::string& tokenType = "", const std::string& token = "");
 
       /**
        * @brief      Destroys the object.
@@ -26,18 +26,18 @@ namespace az
        *
        * @return     { description_of_the_return_value }
        */
-      utility::string_t value() const;
-      
+      std::string value() const;
+
       /**
        * @brief      { function_description }
        *
        * @return     { description_of_the_return_value }
        */
-      utility::string_t type() const;
+      std::string type() const;
 
     private:
-      utility::string_t m_tokenType;
-      utility::string_t m_token;
+      std::string m_tokenType;
+      std::string m_token;
   };
 } // az
 

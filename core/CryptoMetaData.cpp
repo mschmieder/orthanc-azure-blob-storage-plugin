@@ -3,24 +3,56 @@
 
 using namespace crypto;
 
-
-CryptoMetaData::CryptoMetaData(const std::string& metaKek,
-                               const std::string& metaCek,
+CryptoMetaData::CryptoMetaData(const std::string &metaKek,
+                               const std::string &metaCek,
                                const uint64_t encryptedDataSize,
                                const uint64_t decryptedDataSize)
-  : m_metaKek(metaKek),
-    m_metaCek(metaCek),
-    m_decryptedDataSize(decryptedDataSize),
-    m_encryptedDataSize(encryptedDataSize)
+    : m_decryptedDataSize(decryptedDataSize),
+      m_encryptedDataSize(encryptedDataSize)
 {
+  Json::CharReaderBuilder builder;
+  Json::CharReader* reader = builder.newCharReader();
+
+  std::string errors;
+  if (!reader->parse(metaKek.c_str(), metaKek.c_str() + metaKek.size(), &m_metaKek, &errors))
+  {
+    delete reader;
+    throw std::runtime_error(errors);
+  }
+  if (!reader->parse(metaCek.c_str(), metaCek.c_str() + metaCek.size(), &m_metaCek, &errors))
+  {
+    delete reader;
+    throw std::runtime_error(errors);
+  }
+
+  delete reader;
+}
+
+CryptoMetaData::CryptoMetaData(const Json::Value& meta)
+{
+  if (!meta.isMember("cipher")){
+    throw std::runtime_error("missing parameter 'cipher'");
+  }
+  if (!meta.isMember("kek")){
+    throw std::runtime_error("missing parameter 'cek'");
+  }
+  if (!meta.isMember("cek")){
+    throw std::runtime_error("missing parameter 'kek'");
+  }
+
+
+  m_decryptedDataSize = meta["cipher"]["size_decrypted"].asUInt64();
+  m_encryptedDataSize = meta["cipher"]["size_encrypted"].asUInt64();
+  m_metaCek = meta["cek"];
+  m_metaKek = meta["kek"];
 }
 
 CryptoMetaData::~CryptoMetaData()
 {
 }
 
-CryptoMetaData CryptoMetaData::create(const EncryptionKey* kek,
-                                      const EncryptionKey* cek,
+CryptoMetaData CryptoMetaData::create(const EncryptionKey *kek,
+                                      const EncryptionKey *cek,
                                       const uint64_t encryptedDataSize,
                                       const uint64_t decryptedDataSize)
 {
@@ -42,41 +74,52 @@ uint64_t CryptoMetaData::getEncryptedDataSize() const
 
 std::string CryptoMetaData::asJsonString() const
 {
-  web::json::value meta = this->asJson();
+  Json::Value meta = this->asJson();
 
-  std::stringstream sstr;
-  meta.serialize(sstr);
-
-  return sstr.str();
+  Json::StreamWriterBuilder builder;
+  return Json::writeString(builder, meta);
 }
 
-web::json::value CryptoMetaData::asJson() const
+std::string CryptoMetaData::getKekMetaDataAsString() const
 {
-  web::json::value meta;
+    Json::StreamWriterBuilder builder;
+    return Json::writeString(builder, m_metaKek);
+}
 
-  web::json::value cipher;
-  cipher[U("size_decrypted")] = web::json::value::number(m_decryptedDataSize);
-  cipher[U("size_encrypted")] = web::json::value::number(m_encryptedDataSize);
 
-  meta[U("kek")] = web::json::value::parse(m_metaKek);
-  meta[U("cek")] = web::json::value::parse(m_metaCek);
-  meta[U("cipher")] = cipher;
+std::string CryptoMetaData::getCekMetaDataAsString() const
+{
+    Json::StreamWriterBuilder builder;
+    return Json::writeString(builder, m_metaCek);
+}
+
+Json::Value CryptoMetaData::asJson() const
+{
+  Json::Value meta(Json::objectValue);
+
+  Json::Value cipher(Json::objectValue);
+  cipher["size_decrypted"] = Json::Value::UInt64(m_decryptedDataSize);
+  cipher["size_encrypted"] = Json::Value::UInt64(m_encryptedDataSize);
+
+  meta["kek"] = m_metaKek;
+  meta["cek"] = m_metaCek;
+  meta["cipher"] = cipher;
 
   return meta;
 }
 
-CryptoMetaData CryptoMetaData::fromJson(const std::string& meta_json)
+CryptoMetaData CryptoMetaData::fromJson(const std::string &meta_json)
 {
-  web::json::value meta = web::json::value::parse(meta_json);
+  Json::CharReaderBuilder builder;
+  Json::CharReader* reader = builder.newCharReader();
 
-  std::stringstream kek_stream;
-  meta.at(U("kek")).serialize(kek_stream);
+  std::string errors;
 
-  std::stringstream cek_stream;
-  meta.at(U("cek")).serialize(cek_stream);
-
-  return CryptoMetaData(kek_stream.str(),
-                        cek_stream.str(),
-                        meta.at(U("cipher")).at(U("size_decrypted")).as_number().to_uint64(),
-                        meta.at(U("cipher")).at(U("size_encrypted")).as_number().to_uint64());
+  Json::Value meta;
+  if (!reader->parse(meta_json.c_str(), meta_json.c_str() + meta_json.size(), &meta, &errors)){
+    delete reader;
+    throw std::runtime_error(errors);
+  }
+  delete reader;
+  return CryptoMetaData(meta);
 }

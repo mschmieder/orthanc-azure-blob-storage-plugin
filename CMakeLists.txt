@@ -40,7 +40,7 @@ if(NOT USE_VCPGK)
   endif()
 endif()
 
-find_package(Orthanc REQUIRED)  
+find_package(Orthanc REQUIRED)
 find_package(JsonCpp REQUIRED)
 find_package(CryptoPP REQUIRED)
 find_package(cpprestsdk REQUIRED)

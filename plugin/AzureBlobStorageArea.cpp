@@ -1,9 +1,11 @@
+#include <Crypto.h>
+#include "AzureBlobStorageConnection.h"
 #include "AzureBlobStorageArea.h"
 #include "Configuration.h"
-#include <Crypto.h>
 
 #include <sstream>
 #include <cpprest/rawptrstream.h>
+#include <was/blob.h>
 
 using namespace OrthancPlugins;
 
@@ -170,10 +172,9 @@ void AzureBlobStorageArea::Read(void*& content,
     content = malloc(decryptedDataSize);
     size = decryptedDataSize;
 
-    web::json::value metaJson = metaData.asJson();
-    web::json::value kek_id = metaJson["kek"]["key"]["kid"];
+    Json::Value kek_id = metaData.getKekMetaData()["key"]["kid"];
 
-    az::AzureKeyVaultEncryptionKey kek = m_connection->getAzureKeyEncryptionKey(kek_id.as_string());
+    az::AzureKeyVaultEncryptionKey kek = m_connection->getAzureKeyEncryptionKey(kek_id.asString());
     crypto::Decryption::decrypt(&kek,
                                 metaData,
                                 encryptedBlob.data(), encryptedBlob.size(),

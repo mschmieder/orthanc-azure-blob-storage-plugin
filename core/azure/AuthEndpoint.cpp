@@ -2,7 +2,7 @@
 
 using namespace az;
 
-AuthEndpoint::AuthEndpoint(const utility::string_t& loginUri, const utility::string_t& authUri)
+AuthEndpoint::AuthEndpoint(const std::string& loginUri, const std::string& authUri)
   : m_loginUri(loginUri),
     m_authUri(authUri)
 {
@@ -11,12 +11,12 @@ AuthEndpoint::AuthEndpoint(const utility::string_t& loginUri, const utility::str
 
 AuthEndpoint::~AuthEndpoint() {}
 
-utility::string_t AuthEndpoint::getLoginUri() const
+std::string AuthEndpoint::getLoginUri() const
 {
   return m_loginUri;
 }
 
-utility::string_t AuthEndpoint::getAuthUri() const
+std::string AuthEndpoint::getAuthUri() const
 {
   return m_authUri;
 }

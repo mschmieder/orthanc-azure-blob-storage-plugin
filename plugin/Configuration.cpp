@@ -3,6 +3,13 @@
 #include <json/reader.h>
 #include <memory>
 
+// ATTENTION: cpprestsdk pollutes the workspace with the U-macro
+//            that create compile time errors in combination with boost
+//            as well as cryptopp. Therefore we undefine the macro here
+#if defined(U)
+# undef U
+#endif
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -26,16 +33,18 @@ namespace OrthancPlugins
     s.assign(tmp);
     OrthancPluginFreeString(context, tmp);
 
-    Json::Reader reader;
-    if (reader.parse(s, configuration))
-    {
-      return true;
-    }
-    else
-    {
+    Json::CharReaderBuilder builder;
+    Json::CharReader* reader = builder.newCharReader();
+
+    std::string errors;
+    if (!reader->parse(s.c_str(), s.c_str() + s.size(), &configuration, &errors)){
+      delete reader;
       OrthancPluginLogError(context, "Unable to parse the configuration");
       return false;
     }
+
+    delete reader;
+    return true;
   }
 
 

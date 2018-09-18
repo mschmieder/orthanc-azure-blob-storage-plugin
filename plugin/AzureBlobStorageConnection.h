@@ -4,11 +4,18 @@
 #include "orthancazureblobstorage_export.h"
 #include <stdint.h>
 #include <string>
-#include <was/storage_account.h>
-#include <was/blob.h>
 #include "azure/AzureKeyVaultClient.h"
 
 #include <orthanc/OrthancCPlugin.h>
+
+// Forward declarations
+namespace azure {
+    namespace storage {
+        class cloud_storage_account;
+        class cloud_blob_client;
+        class cloud_blob_container;
+    }
+}
 
 namespace OrthancPlugins
 {
@@ -101,14 +108,14 @@ namespace OrthancPlugins
        *
        * @return azure::storage::cloud_blob_container*
        */
-      azure::storage::cloud_blob_container* getContainer() { return &m_container; }
+      azure::storage::cloud_blob_container* getContainer() { return m_container.get(); }
 
       /**
        * @brief Get the Container object
        *
        * @return const azure::storage::cloud_blob_container*
        */
-      const azure::storage::cloud_blob_container* getContainer() const { return &m_container; }
+      const azure::storage::cloud_blob_container* getContainer() const { return m_container.get(); }
 
       /**
        * @brief Get the Key Encryption Key object
@@ -132,9 +139,9 @@ namespace OrthancPlugins
       std::string m_storage_connection_string;
       std::string m_container_name;
 
-      azure::storage::cloud_storage_account m_storage_account;
-      azure::storage::cloud_blob_client m_blob_client;
-      azure::storage::cloud_blob_container m_container;
+      std::unique_ptr<azure::storage::cloud_storage_account> m_storage_account;
+      std::unique_ptr<azure::storage::cloud_blob_client> m_blob_client;
+      std::shared_ptr<azure::storage::cloud_blob_container> m_container;
 
       bool m_encryptionEnabled;
       std::string m_keyVaultBaseUrl;

@@ -3,8 +3,8 @@
 
 #include "EncryptionKey.h"
 #include <string>
-#include <cpprest/json.h>
-namespace crypto 
+#include <json/json.h>
+namespace crypto
 {
   /**
    * @brief      Class for crypto meta data.
@@ -72,12 +72,30 @@ namespace crypto
 
 
       /**
+       * @brief      Gets the cek meta data as json object.
+       *
+       * @return     The cek meta data.
+       */
+      const Json::Value& getCekMetaData() const {
+          return m_metaCek;
+      }
+
+
+      /**
        * @brief      Gets the cek meta data as json string.
        *
        * @return     The cek meta data.
        */
-      const std::string& getCekMetaData() const {
-          return m_metaCek;
+      std::string getCekMetaDataAsString() const;
+
+
+      /**
+       * @brief      Gets the kek meta data as json object
+       *
+       * @return     The kek meta data.
+       */
+      const Json::Value& getKekMetaData() const {
+          return m_metaKek;
       }
 
       /**
@@ -85,10 +103,7 @@ namespace crypto
        *
        * @return     The kek meta data.
        */
-      const std::string& getKekMetaData() const {
-          return m_metaKek;
-      }
-
+      std::string getKekMetaDataAsString() const;
 
       /**
        * @brief      converts object to json string
@@ -97,7 +112,7 @@ namespace crypto
        */
       std::string asJsonString() const;
 
-      web::json::value asJson() const;
+      Json::Value asJson() const;
 
     private:
       /**
@@ -113,8 +128,10 @@ namespace crypto
                      const uint64_t encryptedDataSize,
                      const uint64_t decryptedDataSize);
 
-      std::string m_metaKek;
-      std::string m_metaCek;
+      CryptoMetaData(const Json::Value& meta);
+
+      Json::Value m_metaKek;
+      Json::Value m_metaCek;
       uint64_t m_decryptedDataSize;
       uint64_t m_encryptedDataSize;
   };

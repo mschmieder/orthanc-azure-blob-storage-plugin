@@ -5,12 +5,22 @@ using namespace az;
 using namespace crypto;
 
 AzureKeyVaultEncryptionKey::AzureKeyVaultEncryptionKey(az::AzureKeyVaultClient* client,
-    const utility::string_t& kid,
-    const web::json::value& attributes)
+    const std::string& kid,
+    const std::string& attributes_as_json)
   : m_kid(kid),
-    m_keyVaultClient(client),
-    m_attributes(attributes)
+    m_keyVaultClient(client)
 {
+    if(attributes_as_json.size() > 0){
+        Json::CharReaderBuilder builder;
+        Json::CharReader* reader = builder.newCharReader();
+
+        std::string errors;
+        if (!reader->parse(attributes_as_json.c_str(), attributes_as_json.c_str() + attributes_as_json.size(), &m_attributes, &errors)){
+          delete reader;
+          throw std::runtime_error(errors);
+        }
+        delete reader;
+    }
 }
 
 AzureKeyVaultEncryptionKey::~AzureKeyVaultEncryptionKey()
@@ -46,14 +56,13 @@ void AzureKeyVaultEncryptionKey::unwrap(const uint8_t* data, size_t size, uint8_
 
 std::string AzureKeyVaultEncryptionKey::metaData() const
 {
-    web::json::value meta;
-    web::json::value key;
-    key[U("kid")] = web::json::value::string(m_kid);
-    meta[U("key")] = key;
+    Json::Value meta(Json::objectValue);
+    Json::Value key(Json::objectValue);
 
-    std::stringstream stream;
-    meta.serialize(stream);
+    key["kid"] = Json::Value(m_kid);
+    meta["key"] = key;
 
-    return stream.str();
+    Json::StreamWriterBuilder builder;
+    return Json::writeString(builder, meta);
 }
 

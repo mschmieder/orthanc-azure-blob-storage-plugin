@@ -12,12 +12,14 @@ class AzureBlobStorageTest : public ::testing::Test {
 
   virtual void SetUp()
   {
-    std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection> connection = std::make_unique<OrthancPlugins::AzureBlobStorageConnection>();
-    connection->setConnectionString(storage_connection_string);
-    connection->setContainerName(container_name);
-    connection->establishConnection();
+      OrthancPlugins::AzureBlobStorageConnection conn;
 
-    storage_ = std::make_unique<OrthancPlugins::AzureBlobStorageArea>(connection.release());
+//    std::unique_ptr<OrthancPlugins::AzureBlobStorageConnection> connection = std::make_unique<OrthancPlugins::AzureBlobStorageConnection>();
+//    connection->setConnectionString(storage_connection_string);
+//    connection->setContainerName(container_name);
+//    connection->establishConnection();
+
+//    storage_ = std::make_unique<OrthancPlugins::AzureBlobStorageArea>(connection.release());
   }
 
   virtual void TearDown()

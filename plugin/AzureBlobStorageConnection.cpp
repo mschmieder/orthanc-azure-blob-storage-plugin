@@ -1,8 +1,12 @@
+#include <was/storage_account.h>
+#include <was/blob.h>
+
 #include "AzureBlobStorageConnection.h"
 #include "AzureBlobStorageException.h"
 
 #include <cpprest/filestream.h>
 #include <cpprest/containerstream.h>
+
 
 namespace OrthancPlugins
 {
@@ -38,16 +42,16 @@ namespace OrthancPlugins
     }
 
     // Retrieve storage account from connection string.
-    m_storage_account = azure::storage::cloud_storage_account::parse(m_storage_connection_string);
+    m_storage_account = std::make_unique<azure::storage::cloud_storage_account>(azure::storage::cloud_storage_account::parse(m_storage_connection_string));
 
     // Create the blob client.
-    m_blob_client = m_storage_account.create_cloud_blob_client();
+    m_blob_client = std::make_unique<azure::storage::cloud_blob_client>(m_storage_account->create_cloud_blob_client());
 
     // Retrieve a reference to a previously created container.
-    m_container = m_blob_client.get_container_reference(m_container_name);
+    m_container = std::make_shared<azure::storage::cloud_blob_container>(m_blob_client->get_container_reference(m_container_name));
 
     // Create the container if it doesn't already exist.
-    m_container.create_if_not_exists();
+    m_container->create_if_not_exists();
 
     if (m_encryptionEnabled)
     {

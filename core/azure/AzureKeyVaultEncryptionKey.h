@@ -3,9 +3,7 @@
 
 #include "EncryptionKey.h"
 #include <string>
-#include <cpprest/details/basic_types.h>
-#include <cpprest/json.h>
-
+#include <json/json.h>
 
 namespace az
 {
@@ -26,8 +24,8 @@ namespace az
        * @param[in]  attributes  The attributes
        */
       AzureKeyVaultEncryptionKey(az::AzureKeyVaultClient* client = nullptr,
-                                 const utility::string_t& kid = "",
-                                 const web::json::value& attributes = web::json::value());
+                                 const std::string& kid = "",
+                                 const std::string& attributes_as_json = "");
 
       /**
        * @brief      Destroys the object.
@@ -39,7 +37,7 @@ namespace az
        *
        * @return     attributes
        */
-      const web::json::value& attributes() const
+      const Json::Value& attributes() const
       {
         return m_attributes;
       }
@@ -51,9 +49,9 @@ namespace az
        *
        * @return     json value
        */
-      const web::json::value& attribute(const utility::string_t& attributeName) const
+      Json::Value attribute(const std::string& attributeName) const
       {
-        return m_attributes.at(attributeName);
+        return m_attributes.get(attributeName, Json::Value());
       }
 
 
@@ -95,8 +93,8 @@ namespace az
       virtual std::string metaData() const;
 
     private:
-      utility::string_t m_kid;
-      web::json::value m_attributes;
+      std::string m_kid;
+      Json::Value m_attributes;
 
       az::AzureKeyVaultClient* m_keyVaultClient;
   };

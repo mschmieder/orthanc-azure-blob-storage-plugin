@@ -9,6 +9,8 @@
 
 namespace OrthancPlugins
 {
+  class AzureBlobStorageConnection;
+
   class ORTHANCAZUREBLOBSTORAGE_EXPORT AzureBlobStorageArea
   {
     public:

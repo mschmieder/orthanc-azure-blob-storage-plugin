@@ -1,7 +1,7 @@
 #ifndef AUTH_ENDPOINT_H
 #define AUTH_ENDPOINT_H
 
-#include <cpprest/details/basic_types.h>
+#include <string>
 
 namespace az
 {
@@ -14,8 +14,8 @@ namespace az
        * @param[in]  loginUri  The login uri
        * @param[in]  authUri   The auth uri
        */
-      AuthEndpoint(const utility::string_t& loginUri = "",
-                   const utility::string_t& authUri = "");
+      AuthEndpoint(const std::string& loginUri = "",
+                   const std::string& authUri = "");
 
       /**
        * @brief      Destroys the object.
@@ -27,18 +27,18 @@ namespace az
        *
        * @return     The login uri.
        */
-      utility::string_t getLoginUri() const;
+      std::string getLoginUri() const;
 
       /**
        * @brief      Gets the auth uri.
        *
        * @return     The auth uri.
        */
-      utility::string_t getAuthUri() const;
+      std::string getAuthUri() const;
 
     private:
-      utility::string_t m_loginUri;
-      utility::string_t m_authUri;
+      std::string m_loginUri;
+      std::string m_authUri;
   };
 } // namespace az
 

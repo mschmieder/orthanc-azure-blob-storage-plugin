@@ -1,7 +1,5 @@
 #include "Crypto.h"
 #include "AesEncryptionKey.h"
-#include <cpprest/json.h>
-
 
 using namespace crypto;
 
@@ -28,7 +26,7 @@ std::vector<uint8_t> Decryption::decrypt(const EncryptionKey* kek,
                                          const uint8_t* data, size_t size)
 {
   // retrieve the encrypted content encryption key
-  AesEncryptionKey cek_encrypted = AesEncryptionKey::fromJson(meta.getCekMetaData());
+  AesEncryptionKey cek_encrypted = AesEncryptionKey::fromJson(meta.getCekMetaDataAsString());
 
   KeyPool::Key cek = KeyPool::getInstance().getDecryptionKey(&cek_encrypted, kek);
 
@@ -45,7 +43,7 @@ void Decryption::decrypt(const EncryptionKey* kek,
                     size_t decryptedDataSize)
 {
     // retrieve the encrypted content encryption key
-    AesEncryptionKey cek_encrypted = AesEncryptionKey::fromJson(meta.getCekMetaData());
+    AesEncryptionKey cek_encrypted = AesEncryptionKey::fromJson(meta.getCekMetaDataAsString());
 
     // decrypt the content encryption key using the key encryption key and
     // add the stored initialization vector
