@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
   azurestoragecpp
   GIT_REPOSITORY   https://github.com/Azure/azure-storage-cpp.git
-  GIT_TAG          v5.0.0
+  GIT_TAG          v5.1.1
   #PATCH_COMMAND    git apply ${PROJECT_SOURCE_DIR}/3rdparty/azure-storage-cpp/cpprestsdk-2.10-compatibility.patch
 )
 
