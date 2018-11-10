@@ -15,7 +15,7 @@ Cipher Encryption::encrypt(const EncryptionKey* kek, const uint8_t* data, size_t
   std::vector<uint8_t> encryted_data = cek->wrap(data, size);
 
   // create the meta data that is stored along the encrypted data
-  CryptoMetaData meta = CryptoMetaData::create(kek, encrypted_cek.get(), size, encryted_data.size());
+  CryptoMetaData meta = CryptoMetaData::create(kek, encrypted_cek.get(), encryted_data.size(), size);
 
   return Cipher(encryted_data, meta.asJsonString());
 }
